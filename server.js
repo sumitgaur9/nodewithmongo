@@ -7,6 +7,7 @@ app.use(express.json({ extended: false }));
 app.use('/api/userModel', require('./Api/User'));
 //app.use(cors()); 
 //commit form githubdesktop
-const Port = process.env.PORT || 5000;
+//commit form cli to git repo (from project path directly commmit)
+const Port = process.env.PORT || 5000;   
 
 app.listen(Port, () => console.log('Server started'));
