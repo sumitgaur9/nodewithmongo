@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../DB/User');
+const Participant = require('../DB/User');
+
 const route = express.Router();
 // // Creating one 
 route.post('/', async (req, res) => {
@@ -11,6 +13,20 @@ route.post('/', async (req, res) => {
   let userModel = new User(user);
   await userModel.save();
   res.json(userModel);
+});
+
+// // Registration 
+route.post('/registration', async (req, res) => {
+  const { fullname, email, mobile, role } = req.body;
+  let participant = {};
+  participant.fullname = fullname;
+  participant.email = email;
+  participant.moblie = mobile;
+  participant.password = password;
+  participant.confirmpassword = confirmpassword;
+  let participantModel = new Participant(participant);
+  await participantModel.save();
+  res.json(participantModel);
 });
 
 // Getting all
