@@ -1,6 +1,9 @@
+require("dotenv").config();
+
 const express = require('express');
 const connectDB = require('./DB/Conncection');
 const app = express();
+
 
 connectDB();
 app.use(express.json({ extended: false }));

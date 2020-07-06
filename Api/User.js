@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../DB/User');
-const Participant = require('../DB/User');
+const Participant = require('../DB/Participant');
 
 const route = express.Router();
 // // Creating one 
@@ -15,19 +15,46 @@ route.post('/', async (req, res) => {
   res.json(userModel);
 });
 
-// // Registration 
-route.post('/registration', async (req, res) => {
-  const { fullname, email, mobile, role } = req.body;
-  let participant = {};
-  participant.fullname = fullname;
-  participant.email = email;
-  participant.moblie = mobile;
-  participant.password = password;
-  participant.confirmpassword = confirmpassword;
-  let participantModel = new Participant(participant);
-  await participantModel.save();
-  res.json(participantModel);
-});
+// // // Registration 
+// route.post('/users', async (req, res) => {
+//   const { fullname, email, mobile, role } = req.body;
+//   let participant = {};
+//   participant.fullname = fullname;
+//   participant.email = email;
+//   participant.moblie = mobile;
+//   participant.password = password;
+//   let participantModel = new Participant(participant);
+//   await participantModel.save();
+//   res.json(participantModel);
+// });
+
+route.post('/users', async (req, res) => {
+  // Create a new user
+  try {
+      const user = new Participant(req.body)
+      await user.save()
+      const token = await user.generateAuthToken()
+      res.status(201).send({ user, token })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+route.post('/users/login', async(req, res) => {
+  //Login a registered user
+  try {
+      const { email, password } = req.body
+      const user = await Participant.findByCredentials(email, password)
+      if (!user) {
+          return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+      }
+      const token = await user.generateAuthToken() 
+      res.send({ user, token })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+
+})
 
 // Getting all
 route.get('/', async (req, res) => {

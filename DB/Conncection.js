@@ -5,7 +5,8 @@ const URI ="mongodb+srv://dbUser:dbUser@cluster0-gnavp.mongodb.net/dbUser?retryW
 const connectDB = async () => {
   await mongoose.connect(URI, {
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useCreateIndex: true
   });
   console.log('db connected..!');
 };
