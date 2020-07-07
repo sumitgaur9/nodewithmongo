@@ -2,31 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../DB/User');
 const Participant = require('../DB/Participant');
+const auth = require('../middleware/auth');
 
 const route = express.Router();
-// // Creating one 
-route.post('/', async (req, res) => {
-  const { firstName, lastName } = req.body;
-  let user = {};
-  user.firstName = firstName;
-  user.lastName = lastName;
-  let userModel = new User(user);
-  await userModel.save();
-  res.json(userModel);
-});
 
-// // // Registration 
-// route.post('/users', async (req, res) => {
-//   const { fullname, email, mobile, role } = req.body;
-//   let participant = {};
-//   participant.fullname = fullname;
-//   participant.email = email;
-//   participant.moblie = mobile;
-//   participant.password = password;
-//   let participantModel = new Participant(participant);
-//   await participantModel.save();
-//   res.json(participantModel);
-// });
+
 
 route.post('/users', async (req, res) => {
   // Create a new user
@@ -55,6 +35,37 @@ route.post('/users/login', async(req, res) => {
   }
 
 })
+
+route.get('/users/me', auth, async(req, res) => {
+  // View logged in user profile
+  res.send(req.user)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Creating one 
+route.post('/', async (req, res) => {
+  const { firstName, lastName } = req.body;
+  let user = {};
+  user.firstName = firstName;
+  user.lastName = lastName;
+  let userModel = new User(user);
+  await userModel.save();
+  res.json(userModel);
+});
+
 
 // Getting all
 route.get('/', async (req, res) => {
