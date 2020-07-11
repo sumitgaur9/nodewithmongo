@@ -25,6 +25,10 @@ const participant = new mongoose.Schema({
       required: true,
       minLength: 7
     },
+    role: {
+      type: Number,
+      required: true,
+    },
     tokens: [{
       token: {
         type: String,
