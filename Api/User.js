@@ -11,6 +11,12 @@ const route = express.Router();
 route.post('/users', async (req, res) => {
   // Create a new user
   try {
+    if(req.body.role){
+      if(req.body.role===1){req.body.type = "Doctor" }
+      else if(req.body.role===2){req.body.type = "Nurse" }
+      else if(req.body.role===3){req.body.type = "Physio" }
+      else {req.body.type = "Individual" }
+    }
       const user = new Participant(req.body)
       await user.save()
       const token = await user.generateAuthToken()

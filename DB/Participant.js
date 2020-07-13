@@ -29,6 +29,9 @@ const participant = new mongoose.Schema({
       type: Number,
       required: true,
     },
+    type: {
+      type: String,
+    },
     tokens: [{
       token: {
         type: String,
