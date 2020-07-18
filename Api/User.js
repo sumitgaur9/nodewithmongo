@@ -2,11 +2,55 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../DB/User');
 const Participant = require('../DB/Participant');
+const Doctor = require('../DB/Doctor');
+const Patient = require('../DB/Patient');
 const auth = require('../middleware/auth');
 
 const route = express.Router();
 
 
+route.post('/Save_DoctorProfile',  async (req, res) => {
+  // Create a new Doctor
+  try {    
+      const doctor = new Doctor(req.body)
+      await doctor.save()
+      res.status(200).send({ doctor })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all doctors
+route.get('/Get_DoctorsList', async (req, res) => {
+  try {
+    const doctors = await Doctor.find()
+    res.send(doctors)
+  } catch (err) {
+    res.status(500).json({ message: erro.message })
+  }
+})
+
+
+route.post('/Save_PatientProfile',  async (req, res) => {
+  // Create a new Patient
+  try {    
+      const patient = new Patient(req.body)
+      await patient.save()
+      res.status(200).send({ patient })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all patients
+route.get('/Get_PatientsList', async (req, res) => {
+  try {
+    const patients = await Patient.find()
+    res.send(patients)
+  } catch (err) {
+    res.status(500).json({ message: erro.message })
+  }
+})
 
 route.post('/users', async (req, res) => {
   // Create a new user
