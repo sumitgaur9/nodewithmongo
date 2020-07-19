@@ -4,6 +4,12 @@ const User = require('../DB/User');
 const Participant = require('../DB/Participant');
 const Doctor = require('../DB/Doctor');
 const Patient = require('../DB/Patient');
+const Pharmacist = require('../DB/Pharmacist');
+const Nurse = require('../DB/Nurse');
+const Physio = require('../DB/Physio');
+const VisitCompletionIntimation = require('../DB/VisitCompletionIntimation');
+const PatientMedicinesForHomeDelivery = require('../DB/PatientMedicinesForHomeDelivery');
+const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitCompleteIntimation');
 const auth = require('../middleware/auth');
 
 const route = express.Router();
@@ -30,6 +36,29 @@ route.get('/Get_DoctorsList', async (req, res) => {
   }
 })
 
+// Delete Doctor
+route.delete('/Delete_Doctor:id', getDoctor, async (req, res) => {
+try {
+    await res.subscriber.remove()
+    res.json({ message: "Doctor Deleted successfully "})
+} catch (err) {
+    res.status(500).json({ message: err.message })
+}
+})
+
+async function getDoctor(req, res, next){
+    let subscriber 
+    try{
+        subscriber = await Doctor.findById(req.params.id)
+        if (subscriber == null){
+            return res.status(404).json({message: "Cannot find subscriber" })
+        }
+    } catch(err){
+    }
+    res.subscriber = subscriber
+    next()
+}
+
 
 route.post('/Save_PatientProfile',  async (req, res) => {
   // Create a new Patient
@@ -51,6 +80,206 @@ route.get('/Get_PatientsList', async (req, res) => {
     res.status(500).json({ message: erro.message })
   }
 })
+
+// Delete Patient
+route.delete('/Delete_Patient:id', getPatient, async (req, res) => {
+  try {
+      await res.subscriber.remove()
+      res.json({ message: "Patient Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
+  
+  async function getPatient(req, res, next){
+      let subscriber 
+      try{
+          subscriber = await Patient.findById(req.params.id)
+          if (subscriber == null){
+              return res.status(404).json({message: "Cannot find subscriber" })
+          }
+      } catch(err){  
+      }
+      res.subscriber = subscriber
+      next()
+  }
+
+  /////////////////////////////
+
+  route.post('/Save_PharmacistProfile',  async (req, res) => {
+    // Create a new Pharmacist
+    try {    
+        const pharmacist = new Pharmacist(req.body)
+        await pharmacist.save()
+        res.status(200).send({ pharmacist })
+    } catch (error) {
+        res.status(400).send(error)
+    }
+  })
+  
+  // Getting all pharmacist
+  route.get('/Get_PharmacistsList', async (req, res) => {
+    try {
+      const pharmacist = await Pharmacist.find()
+      res.send(pharmacists)
+    } catch (err) {
+      res.status(500).json({ message: erro.message })
+    }
+  })
+  
+  // Delete Pharmacist
+  route.delete('/Delete_Pharmacist:id', getPharmacist, async (req, res) => {
+  try {
+      await res.subscriber.remove()
+      res.json({ message: "Pharmacist Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
+  
+  async function getPharmacist(req, res, next){
+      let subscriber 
+      try{
+          subscriber = await Pharmacist.findById(req.params.id)
+          if (subscriber == null){
+              return res.status(404).json({message: "Cannot find subscriber" })
+          }
+      } catch(err){
+      }
+      res.subscriber = subscriber
+      next()
+  }
+//////////////////////  
+
+
+route.post('/Save_NurseProfile',  async (req, res) => {
+  // Create a new Nurse
+  try {    
+      const nurse = new Nurse(req.body)
+      await nurse.save()
+      res.status(200).send({ nurse })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all nurse
+route.get('/Get_NursesList', async (req, res) => {
+  try {
+    const nurses = await Nurse.find()
+    res.send(nurses)
+  } catch (err) {
+    res.status(500).json({ message: erro.message })
+  }
+})
+
+// Delete Nurse
+route.delete('/Delete_Nurse:id', getNurse, async (req, res) => {
+try {
+    await res.subscriber.remove()
+    res.json({ message: "Nurse Deleted successfully "})
+} catch (err) {
+    res.status(500).json({ message: err.message })
+}
+})
+
+async function getNurse(req, res, next){
+    let subscriber 
+    try{
+        subscriber = await Nurse.findById(req.params.id)
+        if (subscriber == null){
+            return res.status(404).json({message: "Cannot find subscriber" })
+        }
+    } catch(err){
+    }
+    res.subscriber = subscriber
+    next()
+}
+////////////////////// 
+
+
+
+route.post('/Save_PhysioProfile',  async (req, res) => {
+  // Create a new Physio
+  try {    
+      const physio = new Physio(req.body)
+      await physio.save()
+      res.status(200).send({ physio })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all physio
+route.get('/Get_PhysiosList', async (req, res) => {
+  try {
+    const physios = await Physio.find()
+    res.send(hysios)
+  } catch (err) {
+    res.status(500).json({ message: erro.message })
+  }
+})
+
+// Delete Physio
+route.delete('/Delete_Physio:id', getPhysio, async (req, res) => {
+try {
+    await res.subscriber.remove()
+    res.json({ message: "Physio Deleted successfully "})
+} catch (err) {
+    res.status(500).json({ message: err.message })
+}
+})
+
+async function getPhysio(req, res, next){
+    let subscriber 
+    try{
+        subscriber = await Physio.findById(req.params.id)
+        if (subscriber == null){
+            return res.status(404).json({message: "Cannot find subscriber" })
+        }
+    } catch(err){
+    }
+    res.subscriber = subscriber
+    next()
+}
+
+//////////////
+
+route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
+  // Create a new Physio
+  try {    
+      const visitcompleteintimation = new VisitCompletionIntimation(req.body)
+      await visitcompleteintimation.save()
+      res.status(200).send({ visitcompleteintimation })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+////////////
+
+route.post('/PatMedForHomDel',  async (req, res) => {
+  // Create a new Physio
+  try {    
+      const patientmedicinesforhomedelivery = new PatientMedicinesForHomeDelivery(req.body)
+      await patientmedicinesforhomedelivery.save()
+      res.status(200).send({ patientmedicinesforhomedelivery })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+////////////
+route.post('/PatMedForHomDel',  async (req, res) => {
+  // Create a new Physio
+  try {    
+      const pharmacistvisitcompleteintimation = new PharmacistVisitCompleteIntimation(req.body)
+      await pharmacistvisitcompleteintimation.save()
+      res.status(200).send({ pharmacistvisitcompleteintimation })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+////////////
+
 
 route.post('/users', async (req, res) => {
   // Create a new user
