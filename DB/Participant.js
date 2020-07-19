@@ -32,6 +32,9 @@ const participant = new mongoose.Schema({
     type: {
       type: String,
     },
+    descripiton: {
+      type: String,
+    },
     tokens: [{
       token: {
         type: String,
