@@ -32,7 +32,7 @@ route.get('/Get_DoctorsList', async (req, res) => {
     const doctors = await Doctor.find()
     res.send(doctors)
   } catch (err) {
-    res.status(500).json({ message: erro.message })
+    res.status(500).json({ message: err.message })
   }
 })
 
@@ -77,7 +77,7 @@ route.get('/Get_PatientsList', async (req, res) => {
     const patients = await Patient.find()
     res.send(patients)
   } catch (err) {
-    res.status(500).json({ message: erro.message })
+    res.status(500).json({ message: err.message })
   }
 })
 
@@ -123,7 +123,7 @@ route.delete('/Delete_Patient:id', getPatient, async (req, res) => {
       const pharmacist = await Pharmacist.find()
       res.send(pharmacists)
     } catch (err) {
-      res.status(500).json({ message: erro.message })
+      res.status(500).json({ message: err.message })
     }
   })
   
@@ -169,7 +169,7 @@ route.get('/Get_NursesList', async (req, res) => {
     const nurses = await Nurse.find()
     res.send(nurses)
   } catch (err) {
-    res.status(500).json({ message: erro.message })
+    res.status(500).json({ message: err.message })
   }
 })
 
@@ -216,7 +216,7 @@ route.get('/Get_PhysiosList', async (req, res) => {
     const physios = await Physio.find()
     res.send(hysios)
   } catch (err) {
-    res.status(500).json({ message: erro.message })
+    res.status(500).json({ message: err.message })
   }
 })
 
@@ -375,7 +375,7 @@ route.get('/', async (req, res) => {
       const users = await User.find()
       res.send(users)
   } catch (err){
-      res.status(500).json({ message: erro.message})
+      res.status(500).json({ message: err.message})
   }
   })
  
