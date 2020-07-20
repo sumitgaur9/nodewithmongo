@@ -120,7 +120,7 @@ route.delete('/Delete_Patient:id', getPatient, async (req, res) => {
   // Getting all pharmacist
   route.get('/Get_PharmacistsList', async (req, res) => {
     try {
-      const pharmacist = await Pharmacist.find()
+      const pharmacists = await Pharmacist.find()
       res.send(pharmacists)
     } catch (err) {
       res.status(500).json({ message: err.message })
@@ -214,7 +214,7 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
 route.get('/Get_PhysiosList', async (req, res) => {
   try {
     const physios = await Physio.find()
-    res.send(hysios)
+    res.send(physios)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
