@@ -372,26 +372,27 @@ route.post('/users/login', async(req, res) => {
           return res.status(401).send({error: 'Login failed! Check authentication credentials'})
       }    
       let roleBaseId;
-      if(req.body.role==1){
-        const docid = user.id
-        const doc = await Doctor.findOne({ docid });
+      if(user.role==1){
+        const participantID = user.id
+        const doc = await Doctor.findOne({ participantID });
         roleBaseId = doc.id;
       }
-      if(req.body.role==2){
-        const nurseid = user.id
-        const nurse = await Nurse.findOne({ nurseid });
+      if(user.role==2){
+        const participantID = user.id
+        const nurse = await Nurse.findOne({ participantID });
         roleBaseId = nurse.id;
       }
-      if(req.body.role==3){
-        const physioid = user.id
-        const physio = await Physio.findOne({ physioid });
+      if(user.role==3){
+        const participantID = user.id
+        const physio = await Physio.findOne({ participantID });
         roleBaseId = physio.id;
       }
-      if(req.body.role==4){
-        const pharmacistid = user.id
-        const pharmacist = await Pharmacist.findOne({ pharmacistid });
+      if(user.role==4){
+        const participantID = user.id
+        const pharmacist = await Pharmacist.findOne({ participantID });
         roleBaseId = pharmacist.id;
       }
+      const token = await user.generateAuthToken() 
       res.send({ user, roleBaseId, token })
   } catch (error) {
       res.status(400).send(error)
