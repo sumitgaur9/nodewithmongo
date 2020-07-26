@@ -35,8 +35,6 @@ route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
-
-
 })
 
 // Get one doctor profile
@@ -90,6 +88,17 @@ route.post('/Save_PatientProfile',  async (req, res) => {
       res.status(200).send({ patient })
   } catch (error) {
       res.status(400).send(error)
+  }
+})
+
+route.put('/Update_PatientProfile/:id', getPatient, async (req, res) => {
+  // Update a existing Patient with id
+  res.subscriber = req.body;
+  try {
+    const updatedSubscriber = await res.subscriber.save()
+    res.json(updatedSubscriber)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
   }
 })
 
@@ -148,6 +157,17 @@ route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
     }
   })
 
+  route.put('/Update_PharmacistProfile/:id', getPharmacist, async (req, res) => {
+    // Update a existing Pharmacist with id
+    res.subscriber = req.body;
+    try {
+      const updatedSubscriber = await res.subscriber.save()
+      res.json(updatedSubscriber)
+    } catch (err) {
+      res.status(400).json({ message: err.message })
+    }
+  })
+
   // Get one pharmacist profile
 route.get('/Get_PharmacistProfile/:id', getPharmacist, async (req, res) => {
   try {
@@ -200,6 +220,17 @@ route.post('/Save_NurseProfile',  async (req, res) => {
       res.status(200).send({ nurse })
   } catch (error) {
       res.status(400).send(error)
+  }
+})
+
+route.put('/Update_NurseProfile/:id', getNurse, async (req, res) => {
+  // Update a existing Nurse with id
+  res.subscriber = req.body;
+  try {
+    const updatedSubscriber = await res.subscriber.save()
+    res.json(updatedSubscriber)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
   }
 })
 
@@ -256,6 +287,17 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
       res.status(200).send({ physio })
   } catch (error) {
       res.status(400).send(error)
+  }
+})
+
+route.put('/Update_PhysioProfile/:id', getPhysio, async (req, res) => {
+  // Update a existing Physio with id
+  res.subscriber = req.body;
+  try {
+    const updatedSubscriber = await res.subscriber.save()
+    res.json(updatedSubscriber)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
   }
 })
 
