@@ -315,6 +315,7 @@ route.post('/users', async (req, res) => {
       const user = new Participant(req.body)
       await user.save()
       const token = await user.generateAuthToken()
+      let roleBaseId;
       if(req.body.role==1){
         //Doctor
         let obj = {
@@ -324,7 +325,7 @@ route.post('/users', async (req, res) => {
         }
         const doctor = new Doctor(obj)
         await doctor.save();
-        user.userid= doctor.id;
+        roleBaseId= doctor.id;
       } else if(req.body.role==2){
         //Nurse
         let obj = {
@@ -334,7 +335,7 @@ route.post('/users', async (req, res) => {
         }
         const nurse = new Nurse(obj)
         await nurse.save();
-        user.userid= nurse.id;
+        roleBaseId= nurse.id;
       } else if(req.body.role==3){
         //Physio
         let obj = {
@@ -344,7 +345,7 @@ route.post('/users', async (req, res) => {
         }
         const physio = new Physio(obj)
         await physio.save();
-        user.userid= physio.id;
+        roleBaseId = physio.id;
       } else if(req.body.role==4){
         //Pharmacist
         let obj = {
@@ -354,10 +355,9 @@ route.post('/users', async (req, res) => {
         }
         const pharmacist = new Pharmacist(obj)
         await pharmacist.save();
-        user.pharmacist= pharmacist.id;
-      } 
-     // user.userid
-      res.status(201).send({ user, token })
+        roleBaseId= pharmacist.id;
+      }     
+      res.status(201).send({ user, roleBaseId, token })
   } catch (error) {
       res.status(400).send(error)
   }
@@ -371,27 +371,28 @@ route.post('/users/login', async(req, res) => {
       if (!user) {
           return res.status(401).send({error: 'Login failed! Check authentication credentials'})
       }    
+      let roleBaseId;
       if(req.body.role==1){
         const docid = user.id
         const doc = await Doctor.findOne({ docid });
-        user.userid = doc.id;
+        roleBaseId = doc.id;
       }
       if(req.body.role==2){
         const nurseid = user.id
         const nurse = await Nurse.findOne({ nurseid });
-        user.userid = nurse.id;
+        roleBaseId = nurse.id;
       }
       if(req.body.role==3){
         const physioid = user.id
         const physio = await Physio.findOne({ physioid });
-        user.userid = physio.id;
+        roleBaseId = physio.id;
       }
       if(req.body.role==4){
         const pharmacistid = user.id
         const pharmacist = await Pharmacist.findOne({ pharmacistid });
-        user.userid = pharmacist.id;
+        roleBaseId = pharmacist.id;
       }
-      res.send({ user, token })
+      res.send({ user, roleBaseId, token })
   } catch (error) {
       res.status(400).send(error)
   }
@@ -399,28 +400,29 @@ route.post('/users/login', async(req, res) => {
 })
 
 route.get('/users/me', auth, async(req, res) => {
-  // View logged in user profile   
+  // View logged in user profile 
+  let  roleBaseId;
   if(req.user.role==1){
     const docid = req.user.id
     const doc = await Doctor.findOne({ docid });
-    user.userid = doc.id;
+    roleBaseId = doc.id;
   }
   if(req.user.role==2){
     const nurseid = req.user.id
     const nurse = await Nurse.findOne({ nurseid });
-    user.userid = nurse.id;
+    roleBaseId = nurse.id;
   }
   if(req.user.role==3){
     const physioid = req.user.id
     const physio = await Physio.findOne({ physioid });
-    user.userid = physio.id;
+    roleBaseId = physio.id;
   }
   if(req.user.role==4){
     const pharmacistid = req.user.id
     const pharmacist = await Pharmacist.findOne({ pharmacistid });
-    user.userid = pharmacist.id;
+    roleBaseId = pharmacist.id;
   }
-  res.send(req.user)
+  res.send(req.user, roleBaseId)
 })
 
 route.post('/users/me/logout', auth, async (req, res) => {
