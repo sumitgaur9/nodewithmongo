@@ -93,6 +93,15 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
+// Get one patient profile
+route.get('/Get_PatientProfile/:id', getPatient, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 // Getting all patients
 route.get('/Get_PatientsList', async (req, res) => {
   try {
@@ -138,6 +147,15 @@ route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
         res.status(400).send(error)
     }
   })
+
+  // Get one pharmacist profile
+route.get('/Get_PharmacistProfile/:id', getPharmacist, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
   
   // Getting all pharmacist
   route.get('/Get_PharmacistsList', async (req, res) => {
@@ -185,6 +203,15 @@ route.post('/Save_NurseProfile',  async (req, res) => {
   }
 })
 
+  // Get one nurse profile
+  route.get('/Get_NurseProfile/:id', getNurse, async (req, res) => {
+    try {
+      res.send(res.subscriber)
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+  })
+
 // Getting all nurse
 route.get('/Get_NursesList', async (req, res) => {
   try {
@@ -231,6 +258,15 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
       res.status(400).send(error)
   }
 })
+
+  // Get one physio profile
+  route.get('/Get_PhysioProfile/:id', getPhysio, async (req, res) => {
+    try {
+      res.send(res.subscriber)
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+  })
 
 // Getting all physio
 route.get('/Get_PhysiosList', async (req, res) => {
