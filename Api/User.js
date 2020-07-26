@@ -26,7 +26,7 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
   }
 })
 
-route.put('/Update_DoctorProfile:id', getDoctor, async (req, res) => {
+route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
   // Update a existing Doctor with id
   res.subscriber = req.body;
   try {
@@ -40,7 +40,7 @@ route.put('/Update_DoctorProfile:id', getDoctor, async (req, res) => {
 })
 
 // Get one doctor profile
-route.get('/Get_DoctorProfile:id', getDoctor, async (req, res) => {
+route.get('/Get_DoctorProfile/:id', getDoctor, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
