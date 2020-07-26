@@ -26,6 +26,28 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
   }
 })
 
+route.put('/Update_DoctorProfile:id', getDoctor, async (req, res) => {
+  // Update a existing Doctor with id
+  res.subscriber = req.body;
+  try {
+    const updatedSubscriber = await res.subscriber.save()
+    res.json(updatedSubscriber)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+
+
+})
+
+// Get one doctor profile
+route.get('/Get_DoctorProfile:id', getDoctor, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 // Getting all doctors
 route.get('/Get_DoctorsList', async (req, res) => {
   try {
@@ -37,7 +59,7 @@ route.get('/Get_DoctorsList', async (req, res) => {
 })
 
 // Delete Doctor
-route.delete('/Delete_Doctor:id', getDoctor, async (req, res) => {
+route.delete('/Delete_Doctor/:id', getDoctor, async (req, res) => {
 try {
     await res.subscriber.remove()
     res.json({ message: "Doctor Deleted successfully "})
@@ -82,7 +104,7 @@ route.get('/Get_PatientsList', async (req, res) => {
 })
 
 // Delete Patient
-route.delete('/Delete_Patient:id', getPatient, async (req, res) => {
+route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
   try {
       await res.subscriber.remove()
       res.json({ message: "Patient Deleted successfully "})
@@ -128,7 +150,7 @@ route.delete('/Delete_Patient:id', getPatient, async (req, res) => {
   })
   
   // Delete Pharmacist
-  route.delete('/Delete_Pharmacist:id', getPharmacist, async (req, res) => {
+  route.delete('/Delete_Pharmacist/:id', getPharmacist, async (req, res) => {
   try {
       await res.subscriber.remove()
       res.json({ message: "Pharmacist Deleted successfully "})
@@ -174,7 +196,7 @@ route.get('/Get_NursesList', async (req, res) => {
 })
 
 // Delete Nurse
-route.delete('/Delete_Nurse:id', getNurse, async (req, res) => {
+route.delete('/Delete_Nurse/:id', getNurse, async (req, res) => {
 try {
     await res.subscriber.remove()
     res.json({ message: "Nurse Deleted successfully "})
@@ -221,7 +243,7 @@ route.get('/Get_PhysiosList', async (req, res) => {
 })
 
 // Delete Physio
-route.delete('/Delete_Physio:id', getPhysio, async (req, res) => {
+route.delete('/Delete_Physio/:id', getPhysio, async (req, res) => {
 try {
     await res.subscriber.remove()
     res.json({ message: "Physio Deleted successfully "})
@@ -293,6 +315,48 @@ route.post('/users', async (req, res) => {
       const user = new Participant(req.body)
       await user.save()
       const token = await user.generateAuthToken()
+      if(req.body.role==1){
+        //Doctor
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const doctor = new Doctor(obj)
+        await doctor.save();
+        user.userid= doctor.id;
+      } else if(req.body.role==2){
+        //Nurse
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const nurse = new Nurse(obj)
+        await nurse.save();
+        user.userid= nurse.id;
+      } else if(req.body.role==3){
+        //Physio
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const physio = new Physio(obj)
+        await physio.save();
+        user.userid= physio.id;
+      } else if(req.body.role==4){
+        //Pharmacist
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const pharmacist = new Pharmacist(obj)
+        await pharmacist.save();
+        user.pharmacist= pharmacist.id;
+      } 
+     // user.userid
       res.status(201).send({ user, token })
   } catch (error) {
       res.status(400).send(error)
@@ -306,8 +370,27 @@ route.post('/users/login', async(req, res) => {
       const user = await Participant.findByCredentials(email, password)
       if (!user) {
           return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+      }    
+      if(req.body.role==1){
+        const docid = user.id
+        const doc = await Doctor.findOne({ docid });
+        user.userid = doc.id;
       }
-      const token = await user.generateAuthToken() 
+      if(req.body.role==2){
+        const nurseid = user.id
+        const nurse = await Nurse.findOne({ nurseid });
+        user.userid = nurse.id;
+      }
+      if(req.body.role==3){
+        const physioid = user.id
+        const physio = await Physio.findOne({ physioid });
+        user.userid = physio.id;
+      }
+      if(req.body.role==4){
+        const pharmacistid = user.id
+        const pharmacist = await Pharmacist.findOne({ pharmacistid });
+        user.userid = pharmacist.id;
+      }
       res.send({ user, token })
   } catch (error) {
       res.status(400).send(error)
@@ -316,7 +399,27 @@ route.post('/users/login', async(req, res) => {
 })
 
 route.get('/users/me', auth, async(req, res) => {
-  // View logged in user profile
+  // View logged in user profile   
+  if(req.user.role==1){
+    const docid = req.user.id
+    const doc = await Doctor.findOne({ docid });
+    user.userid = doc.id;
+  }
+  if(req.user.role==2){
+    const nurseid = req.user.id
+    const nurse = await Nurse.findOne({ nurseid });
+    user.userid = nurse.id;
+  }
+  if(req.user.role==3){
+    const physioid = req.user.id
+    const physio = await Physio.findOne({ physioid });
+    user.userid = physio.id;
+  }
+  if(req.user.role==4){
+    const pharmacistid = req.user.id
+    const pharmacist = await Pharmacist.findOne({ pharmacistid });
+    user.userid = pharmacist.id;
+  }
   res.send(req.user)
 })
 

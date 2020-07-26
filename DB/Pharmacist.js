@@ -20,12 +20,17 @@ const pharmacist = new mongoose.Schema({
             }
         }
     },
+    participantID: {
+        type: String,
+        required: true,
+    },
     image: {
         type: String,
     },
     experties: {
         type: String,
-        required: true,
+        default: '',
+       // required: true,
     },
     phoneno: {
         type: String,
@@ -35,7 +40,8 @@ const pharmacist = new mongoose.Schema({
     },
     charges: {
         type: Number,
-        required: true,
+        default: 0,
+       // required: true,
     },
     area: {
         type: String,
