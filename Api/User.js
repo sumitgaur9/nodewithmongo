@@ -27,7 +27,7 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
 })
 
 route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
-  // Update a existing Doctor with id
+  //Update a existing Doctor with id
   res.subscriber = req.body;
   try {
     const updatedSubscriber = await res.subscriber.save()
@@ -35,6 +35,15 @@ route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
+
+  // const id = req.params.id;
+  // const postData = req.body;
+  // const post = await this.post.findByIdAndUpdate(id, postData, { new: true });
+  // if (post) {
+  //   res.send(post);
+  // } else {
+  //   next(new PostNotFoundException(id));
+  // }
 })
 
 // Get one doctor profile
@@ -344,7 +353,7 @@ async function getPhysio(req, res, next){
 }
 
 //////////////
-
+//visit complete for all other than pharmacist
 route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
   // Create a new Physio
   try {    
@@ -357,7 +366,7 @@ route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
 })
 ////////////
 
-route.post('/PatMedForHomDel',  async (req, res) => {
+route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
   // Create a new Physio
   try {    
       const patientmedicinesforhomedelivery = new PatientMedicinesForHomeDelivery(req.body)
@@ -368,7 +377,7 @@ route.post('/PatMedForHomDel',  async (req, res) => {
   }
 })
 ////////////
-route.post('/PatMedForHomDel',  async (req, res) => {
+route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
   // Create a new Physio
   try {    
       const pharmacistvisitcompleteintimation = new PharmacistVisitCompleteIntimation(req.body)
