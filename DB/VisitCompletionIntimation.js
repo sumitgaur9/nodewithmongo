@@ -12,6 +12,10 @@ const visitcompleteintimation = new mongoose.Schema({
     isNextVisitRequired: {
         type: Boolean,
         required: true,
+    },
+    appointmentId: {
+        type: String,
+        required: true,
     }
 
 });

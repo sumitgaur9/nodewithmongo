@@ -12,6 +12,7 @@ const PatientMedicinesForHomeDelivery = require('../DB/PatientMedicinesForHomeDe
 const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitCompleteIntimation');
 const Disease = require('../DB/Disease');
 const Expertise = require('../DB/Expertise');
+const Appointment = require('../DB/Appointment');
 const auth = require('../middleware/auth');
 
 const route = express.Router();
@@ -348,6 +349,12 @@ route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
   try {    
       const visitcompleteintimation = new VisitCompletionIntimation(req.body)
       await visitcompleteintimation.save()
+
+      let subscr;
+      subscr = await Appointment.findById(req.body.appointmentId)
+      subscr.isVisitCompleted = true;
+      const updatedSubscr = await subscr.save()
+
       res.status(200).send({ visitcompleteintimation })
   } catch (error) {
       res.status(400).send(error)
@@ -423,6 +430,64 @@ route.post('/Save_Expertise',  async (req, res) => {
       res.status(400).send(error)
   }
 })
+
+// Get filterd doctors list based on expertise
+  route.get('/Get_FilteredDoctors/:expertise', getFilteredDoctors, async (req, res) => {
+    try {
+      res.send(res.subscriber)
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+  })
+
+  async function getFilteredDoctors(req, res, next){
+    let subscriber 
+    try{
+        subscriber = await Doctor.findById(req.params.expertise)
+        if (subscriber == null){
+            return res.status(404).json({message: "Cannot find subscriber" })
+        }
+    } catch(err){
+    }
+    res.subscriber = subscriber
+    next()
+}
+
+//Save new appointment
+route.post('/Save_BookAppointment',  async (req, res) => {
+  // Create a new appointment
+  try {    
+      const appointment = new Appointment(req.body)
+      await appointment.save()
+      res.status(200).send({ appointment })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+//Get my(doctor) appointments list by doctor's id
+route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredAppointments, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getFilteredAppointments(req, res, next){
+  let subscriber 
+  try{
+      subscriber = await Appointment.findById(req.params.doctorID)
+      if (subscriber == null){
+          return res.status(404).json({message: "Cannot find subscriber" })
+      }
+  } catch(err){
+  }
+  res.subscriber = subscriber
+  next()
+}
+
+
 
 //////////////////////////
 
