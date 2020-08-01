@@ -10,6 +10,8 @@ const Physio = require('../DB/Physio');
 const VisitCompletionIntimation = require('../DB/VisitCompletionIntimation');
 const PatientMedicinesForHomeDelivery = require('../DB/PatientMedicinesForHomeDelivery');
 const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitCompleteIntimation');
+const Disease = require('../DB/Disease');
+const Expertise = require('../DB/Expertise');
 const auth = require('../middleware/auth');
 
 const route = express.Router();
@@ -374,7 +376,60 @@ route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
       res.status(400).send(error)
   }
 })
+
+
+
+
 ////////////
+
+route.post('/Save_Disease',  async (req, res) => {
+  // Create a new Disease
+  try {    
+      const disease = new Disease(req.body)
+      await disease.save()
+      res.status(200).send({ disease })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all diseases
+route.get('/Get_DiseasesList', async (req, res) => {
+  try {
+    const diseases = await Disease.find()
+    res.send(diseases)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+// Getting all expertise
+route.get('/Get_ExpertiseList', async (req, res) => {
+  try {
+    const expertise = await Expertise.find()
+    res.send(expertise)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+route.post('/Save_Expertise',  async (req, res) => {
+  // Create a new Expertise
+  try {    
+      const expertise = new Expertise(req.body)
+      await expertise.save()
+      res.status(200).send({ expertise })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+//////////////////////////
+
+
+
+
+
 
 
 route.post('/users', async (req, res) => {
