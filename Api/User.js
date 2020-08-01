@@ -28,22 +28,13 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
 
 route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
   //Update a existing Doctor with id
-  res.subscriber = req.body;
   try {
-    const updatedSubscriber = await res.subscriber.save()
-    res.json(updatedSubscriber)
+    const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    res.send(doct)
+    
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
-
-  // const id = req.params.id;
-  // const postData = req.body;
-  // const post = await this.post.findByIdAndUpdate(id, postData, { new: true });
-  // if (post) {
-  //   res.send(post);
-  // } else {
-  //   next(new PostNotFoundException(id));
-  // }
 })
 
 // Get one doctor profile
@@ -102,10 +93,9 @@ route.post('/Save_PatientProfile',  async (req, res) => {
 
 route.put('/Update_PatientProfile/:id', getPatient, async (req, res) => {
   // Update a existing Patient with id
-  res.subscriber = req.body;
   try {
-    const updatedSubscriber = await res.subscriber.save()
-    res.json(updatedSubscriber)
+    const pat = await Patient.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
@@ -168,10 +158,9 @@ route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
 
   route.put('/Update_PharmacistProfile/:id', getPharmacist, async (req, res) => {
     // Update a existing Pharmacist with id
-    res.subscriber = req.body;
     try {
-      const updatedSubscriber = await res.subscriber.save()
-      res.json(updatedSubscriber)
+      const pat = await Pharmacist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+      res.send(pat)  
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
@@ -234,10 +223,9 @@ route.post('/Save_NurseProfile',  async (req, res) => {
 
 route.put('/Update_NurseProfile/:id', getNurse, async (req, res) => {
   // Update a existing Nurse with id
-  res.subscriber = req.body;
   try {
-    const updatedSubscriber = await res.subscriber.save()
-    res.json(updatedSubscriber)
+    const pat = await Nurse.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
@@ -301,10 +289,9 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
 
 route.put('/Update_PhysioProfile/:id', getPhysio, async (req, res) => {
   // Update a existing Physio with id
-  res.subscriber = req.body;
   try {
-    const updatedSubscriber = await res.subscriber.save()
-    res.json(updatedSubscriber)
+    const pat = await Physio.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
