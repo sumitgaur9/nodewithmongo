@@ -443,7 +443,7 @@ route.post('/Save_Expertise',  async (req, res) => {
   async function getFilteredDoctors(req, res, next){
     let subscriber 
     try{
-        subscriber = await Doctor.findById(req.params.expertise)
+        subscriber = await Doctor.find({experties: req.params.expertise});
         if (subscriber == null){
             return res.status(404).json({message: "Cannot find subscriber" })
         }

@@ -26,6 +26,7 @@ const doctor = new mongoose.Schema({
     },
     image: {
         type: String,
+        default: '',
     },
     experties: {
         type: String,
@@ -45,9 +46,11 @@ const doctor = new mongoose.Schema({
     },
     area: {
         type: String,
+        default: '',
     },
     qualification: {
         type: String,
+        default: '',
     },
 
 });
