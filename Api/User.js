@@ -477,7 +477,8 @@ route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredAppointments, async (
 async function getFilteredAppointments(req, res, next){
   let subscriber 
   try{
-      subscriber = await Appointment.findById(req.params.doctorID)
+      subscriber = await Appointment.find({doctorID: req.params.doctorID});
+
       if (subscriber == null){
           return res.status(404).json({message: "Cannot find subscriber" })
       }
