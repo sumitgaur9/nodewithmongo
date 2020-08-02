@@ -8,14 +8,40 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    },  
+    },     
+    appointmentID: {
+        type: String,
+        required: true,
+    },
+    medicineID: {
+        type: String,
+        required: true,
+    },
     medicineName: {
+        type: String,
+        required: true,
+    },
+    pharmacistID: {
+        type: String,
+        required: true,
+    },
+    pharmacistName: {
         type: String,
         required: true,
     },
     patientContactNo: {
         type: String
-    }
+    },
+    patientAddress: {
+        type: String
+    },
+    patientPIN: {
+        type: String
+    },
+    isPharmacyProvided: {
+        type: Boolean,  // save only from PharmacistVisitCompleteIntimation UI
+        default: false
+    },
 
 });
 

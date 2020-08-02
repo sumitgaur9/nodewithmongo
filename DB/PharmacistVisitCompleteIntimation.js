@@ -8,7 +8,11 @@ const pharmacistvisticompleteintimation = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    },  
+    },
+    appointmentId: {
+        type: String,
+        required: true,
+    },    
     medicineName: {
         type: String,
         required: true,
@@ -19,6 +23,7 @@ const pharmacistvisticompleteintimation = new mongoose.Schema({
     pharmacyPersonContactNo: {
         type: String
     }
+
 
 });
 

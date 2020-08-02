@@ -378,6 +378,17 @@ route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
   try {    
       const pharmacistvisitcompleteintimation = new PharmacistVisitCompleteIntimation(req.body)
       await pharmacistvisitcompleteintimation.save()
+
+      let subscr;
+      subscr = await Appointment.findById(req.body.appointmentId)
+      subscr.isPharmacyProvided = true;
+      const updatedSubscr = await subscr.save();
+
+      let subscr;
+      subscr = await PatientMedicinesForHomeDelivery.findById(req.body.appointmentId)
+      subscr.isPharmacyProvided = true;
+      const updatedSubscr = await subscr.save();
+
       res.status(200).send({ pharmacistvisitcompleteintimation })
   } catch (error) {
       res.status(400).send(error)
@@ -487,6 +498,30 @@ async function getFilteredAppointments(req, res, next){
   res.subscriber = subscriber
   next()
 }
+
+
+////////////
+
+route.post('/Save_Medicine',  async (req, res) => {
+  // Create a new Medicines
+  try {    
+      const medicine = new Medicine(req.body)
+      await medicine.save()
+      res.status(200).send({ medicine })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all diseases
+route.get('/Get_MedicinesList', async (req, res) => {
+  try {
+    const medicines = await Medicine.find()
+    res.send(medicines)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 
 
