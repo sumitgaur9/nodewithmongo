@@ -525,6 +525,29 @@ route.get('/Get_MedicinesList', async (req, res) => {
 
 
 
+//Get my(phamacist) pharmacy request list by phamacist's id
+route.get('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getFilteredPharmacyReq(req, res, next){
+  let subscriber 
+  try{
+      subscriber = await PatientMedicineForHomeDelivery.find({pharmacistID: req.params.pharmacistID});
+
+      if (subscriber == null){
+          return res.status(404).json({message: "Cannot find subscriber" })
+      }
+  } catch(err){
+  }
+  res.subscriber = subscriber
+  next()
+}
+
 //////////////////////////
 
 
