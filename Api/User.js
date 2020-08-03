@@ -13,6 +13,7 @@ const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitComplete
 const Disease = require('../DB/Disease');
 const Expertise = require('../DB/Expertise');
 const Appointment = require('../DB/Appointment');
+const Medicine = require('../DB/Medicine');
 const auth = require('../middleware/auth');
 
 const route = express.Router();
@@ -659,21 +660,25 @@ route.get('/users/me', auth, async(req, res) => {
   if(req.user.role==1){
     const docid = req.user.id
     const doc = await Doctor.findOne({ docid });
+    //const doc = await Doctor.findOne({ participantID: docid });
     roleBaseId = doc.id;
   }
   if(req.user.role==2){
     const nurseid = req.user.id
-    const nurse = await Nurse.findOne({ nurseid });
+    const nurse = await Nurse.findOne({ docid });
+    //const nurse = await Nurse.findOne({ participantID: nurseid });
     roleBaseId = nurse.id;
   }
   if(req.user.role==3){
     const physioid = req.user.id
-    const physio = await Physio.findOne({ physioid });
+    const physio = await Physio.findOne({ docid });
+    //const physio = await Physio.findOne({ participantID: physioid });
     roleBaseId = physio.id;
   }
   if(req.user.role==4){
     const pharmacistid = req.user.id
-    const pharmacist = await Pharmacist.findOne({ pharmacistid });
+    const pharmacist = await Pharmacist.findOne({ docid });
+    //const pharmacist = await Pharmacist.findOne({ participantID: pharmacistid });
     roleBaseId = pharmacist.id;
   }
   res.send(req.user, roleBaseId)
