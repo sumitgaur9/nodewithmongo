@@ -386,9 +386,10 @@ route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
       const updatedSubscr = await subscr.save();
 
       let subscri;
-      subscri = await PatientMedicinesForHomeDelivery.findById(req.body.appointmentId)
-      subscri.isPharmacyProvided = true;
-      const updatedSubscri = await subscri.save();
+      subscri = await PatientMedicinesForHomeDelivery.find({appointmentID: req.body.appointmentId})
+      
+      subscri[0].isPharmacyProvided = true;
+      const updatedSubscri = await subscri[0].save();
 
       res.status(200).send({ pharmacistvisitcompleteintimation })
   } catch (error) {
