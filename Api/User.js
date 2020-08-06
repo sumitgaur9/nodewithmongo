@@ -8,7 +8,7 @@ const Pharmacist = require('../DB/Pharmacist');
 const Nurse = require('../DB/Nurse');
 const Physio = require('../DB/Physio');
 const VisitCompletionIntimation = require('../DB/VisitCompletionIntimation');
-const PatientMedicineForHomeDelivery = require('../DB/PatientMedicinesForHomeDelivery');
+const PatientMedicinesForHomeDelivery = require('../DB/PatientMedicinesForHomeDelivery');
 const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitCompleteIntimation');
 const Disease = require('../DB/Disease');
 const Expertise = require('../DB/Expertise');
@@ -538,7 +538,7 @@ route.get('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, a
 async function getFilteredPharmacyReq(req, res, next){
   let subscriber 
   try{
-      subscriber = await PatientMedicineForHomeDelivery.find({pharmacistID: req.params.pharmacistID});
+      subscriber = await PatientMedicinesForHomeDelivery.find({pharmacistID: req.params.pharmacistID});
 
       if (subscriber == null){
           return res.status(404).json({message: "Cannot find subscriber" })
