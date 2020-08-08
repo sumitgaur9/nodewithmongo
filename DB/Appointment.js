@@ -15,7 +15,7 @@ const appointment = new mongoose.Schema({
     },
     patientEmail: {
         type: String,
-        unique: true,
+        //unique: true, not required for this case
         lowercase: true,
         validate: value => {
             if (!validator.isEmail(value)) {
