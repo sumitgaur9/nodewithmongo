@@ -15,6 +15,8 @@ const Expertise = require('../DB/Expertise');
 const Appointment = require('../DB/Appointment');
 const Medicine = require('../DB/Medicine');
 const LabTest = require('../DB/LabTest');
+const LabTestsPackage = require('../DB/LabTestsPackage');
+const BookLabTest = require('../DB/BookLabTest');
 
 const auth = require('../middleware/auth');
 
@@ -601,6 +603,53 @@ route.get('/Get_LabTestsList', async (req, res) => {
 })
 
 
+
+
+route.post('/Save_LabTestsPackage',  async (req, res) => {
+  // Book a new LabTest
+  try {    
+      const labtestspackage = new LabTestsPackage(req.body)
+      await labtestspackage.save()
+      res.status(200).send({ labtestspackage })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+
+// Getting all lab tests packages
+route.get('/Get_LabTestsPackage', async (req, res) => {
+  try {
+    const labtestspackage = await LabTestsPackage.find()
+    res.send(labtestspackage)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+
+
+route.post('/Save_BookLabTest',  async (req, res) => {
+  // Book a new LabTest
+  try {    
+      const booklabtest = new BookLabTest(req.body)
+      await booklabtest.save()
+      res.status(200).send({ booklabtest })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Getting all lab tests booking list
+route.get('/Get_LabTestsBookings', async (req, res) => {
+  try {
+    const labtestsbookings = await BookLabTest.find()
+    res.send(labtestsbookings)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 //////////////////////////
 
