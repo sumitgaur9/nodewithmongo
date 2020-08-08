@@ -623,7 +623,17 @@ route.post('/users', async (req, res) => {
       await user.save()
       const token = await user.generateAuthToken()
       let roleBaseId;
-      if(req.body.role==1){
+      if(req.body.role < 1){
+        //Patient(Individual)
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const patient = new Patient(obj)
+        await patient.save();
+        roleBaseId= patient.id;
+      } else if(req.body.role==1){
         //Doctor
         let obj = {
           name: req.body.name,
