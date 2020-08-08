@@ -8,7 +8,7 @@ const labtest = new mongoose.Schema({
         type: String,
         required: true,
     },
-    sampleType: {
+    sampleType: {   //blood, urine etch
         type: String,
         required: true,
     },

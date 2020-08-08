@@ -33,7 +33,7 @@ const booklabtest = new mongoose.Schema({
     patientPIN: {
         type: String,
     },
-    testType: {
+    testType: {    //individual or package
         type: String,
         required: true
     },
@@ -47,6 +47,10 @@ const booklabtest = new mongoose.Schema({
         testID: String,
         testname: String
     }],
+    price: {
+        type: Number,
+        required: true,
+    },
     isReportGenerated: {
         type: Boolean,  // save only from VisitCompletionIntimation UI
         default: false
