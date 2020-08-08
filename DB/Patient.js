@@ -20,16 +20,18 @@ const patient = new mongoose.Schema({
             }
         }
     },
+    participantID: {
+        type: String,
+        required: true,
+    },
     image: {
         type: String,
     },
     disease: {
-        type: String,
-        required: true,
+        type: String
     },
     requiredDoctor: {
         type: String,
-        required: true,
     },    
     phoneno: {
         type: String,
