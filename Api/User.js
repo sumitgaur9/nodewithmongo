@@ -14,6 +14,8 @@ const Disease = require('../DB/Disease');
 const Expertise = require('../DB/Expertise');
 const Appointment = require('../DB/Appointment');
 const Medicine = require('../DB/Medicine');
+const LabTest = require('../DB/LabTest');
+
 const auth = require('../middleware/auth');
 
 const route = express.Router();
@@ -479,7 +481,7 @@ route.post('/Save_BookAppointment',  async (req, res) => {
 })
 
 //Get my(doctor) appointments list by doctor's id
-route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredAppointments, async (req, res) => {
+route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredDoctorAppointments, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
@@ -487,7 +489,7 @@ route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredAppointments, async (
   }
 })
 
-async function getFilteredAppointments(req, res, next){
+async function getFilteredDoctorAppointments(req, res, next){
   let subscriber 
   try{
       subscriber = await Appointment.find({doctorID: req.params.doctorID});
@@ -549,6 +551,56 @@ async function getFilteredPharmacyReq(req, res, next){
   res.subscriber = subscriber
   next()
 }
+
+///////////
+
+//Get my(patient) appointments list by patient's id
+route.get('/Get_AppointmentsByPatientID/:patientID', getFilteredPatientAppointments, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getFilteredPatientAppointments(req, res, next){
+  let subscriber 
+  try{
+      subscriber = await Appointment.find({patientID: req.params.patientID});
+
+      if (subscriber == null){
+          return res.status(404).json({message: "Cannot find subscriber" })
+      }
+  } catch(err){
+  }
+  res.subscriber = subscriber
+  next()
+}
+
+
+route.post('/Save_LabTest',  async (req, res) => {
+  // Create a new LabTest
+  try {    
+      const labtest = new LabTest(req.body)
+      await labtest.save()
+      res.status(200).send({ labtest })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+
+// Getting all lab tests
+route.get('/Get_LabTestsList', async (req, res) => {
+  try {
+    const labtests = await LabTest.find()
+    res.send(labtests)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
 
 //////////////////////////
 

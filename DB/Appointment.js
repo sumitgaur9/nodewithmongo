@@ -23,6 +23,10 @@ const appointment = new mongoose.Schema({
             }
         }
     },
+    patientID: {
+        type: String,
+        required: true
+    },
     patientAddres: {
         type: String,
     },

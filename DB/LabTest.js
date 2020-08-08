@@ -3,13 +3,17 @@ const mongoose = require('mongoose');
 
 // medicineName, companyName, price
 
-const medicine = new mongoose.Schema({
-    medicineName: {
+const labtest = new mongoose.Schema({
+    testName: {
         type: String,
         required: true,
     },
-    companyName: {
+    sampleType: {
         type: String,
+        required: true,
+    },
+    minSampleSize: {
+        type: Number,
         required: true,
     },
     price: {
@@ -19,8 +23,8 @@ const medicine = new mongoose.Schema({
 });
 
 
-const Medicine = mongoose.model('medicine', medicine);
+const LabTest = mongoose.model('labtest', labtest);
 
-module.exports = Medicine;
+module.exports = LabTest;
 
 
