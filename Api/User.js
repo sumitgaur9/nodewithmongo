@@ -17,6 +17,7 @@ const Medicine = require('../DB/Medicine');
 const LabTest = require('../DB/LabTest');
 const LabTestsPackage = require('../DB/LabTestsPackage');
 const BookLabTest = require('../DB/BookLabTest');
+const Admin = require('../DB/Admin');
 
 const auth = require('../middleware/auth');
 
@@ -666,6 +667,8 @@ route.post('/users', async (req, res) => {
       if(req.body.role===1){req.body.type = "Doctor" }
       else if(req.body.role===2){req.body.type = "Nurse" }
       else if(req.body.role===3){req.body.type = "Physio" }
+      else if(req.body.role===4){req.body.type = "Pharmacist" }
+      else if(req.body.role===11){req.body.type = "Admin" }      
       else {req.body.type = "Individual" }
     }
       const user = new Participant(req.body)
@@ -722,6 +725,16 @@ route.post('/users', async (req, res) => {
         const pharmacist = new Pharmacist(obj)
         await pharmacist.save();
         roleBaseId= pharmacist.id;
+      }  else if(req.body.role==11){
+        //Admin
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const admin = new Admin(obj)
+        await admin.save();
+        roleBaseId = admin.id; //should be null not 'admin.id'
       }     
       res.status(201).send({ user, roleBaseId, token })
   } catch (error) {
@@ -755,6 +768,9 @@ route.post('/users/login', async(req, res) => {
       }else if(user.role==4){        
         const pharmacist = await Pharmacist.findOne({ participantID });
         roleBaseId = pharmacist.id;
+      }else if(user.role==11){        
+        const admin = await Admin.findOne({ participantID });
+        roleBaseId = admin.id;
       }
       const token = await user.generateAuthToken() 
       res.send({ user, roleBaseId, token })
