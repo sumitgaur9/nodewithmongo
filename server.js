@@ -10,6 +10,8 @@ const app = express();
 connectDB();
 app.use(express.json({ extended: false }));
 app.use(cors()); 
+// app.options('*', cors())
+//app.options('http://localhost:4300', cors())
 
 app.use('/api/userModel', require('./Api/User'));
 
