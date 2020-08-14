@@ -1,5 +1,15 @@
 const express = require('express');
+
+var path = require('path');
+
+
+var fs = require('fs');
+
 const mongoose = require('mongoose');
+
+var multer = require('multer');
+
+
 const User = require('../DB/User');
 const Participant = require('../DB/Participant');
 const Doctor = require('../DB/Doctor');
@@ -18,10 +28,64 @@ const LabTest = require('../DB/LabTest');
 const LabTestsPackage = require('../DB/LabTestsPackage');
 const BookLabTest = require('../DB/BookLabTest');
 const Admin = require('../DB/Admin');
+const Item = require('../DB/Item');
 
 const auth = require('../middleware/auth');
+const { pathToFileURL } = require('url');
 
 const route = express.Router();
+
+route.use(express.static(__dirname+"./public/"));
+
+
+var Storage = multer.diskStorage({
+  destination: "./public/uploads/",
+  filename:(req,file,cb)=>{
+    cb(null,file.fieldname+"_"+Date.now()+path.extname(file.originalname))
+  }
+});
+
+var upload = multer({ 
+  storage: Storage 
+}).any('file');
+
+
+route.post('/api/photo', upload, function (req, res) {
+
+  //newItem.save(function (err, doc) {
+    // if(err) throw err;
+    // if(err) {
+
+    // }
+
+    try {
+      var imageFile = req.files[0].filename;
+      var success = req.files[0].filename + "Uploaded Successfully";
+      var newItem = new Item({
+        image: imageFile,
+      });
+      newItem.save()
+      res.render('render-file', { title: 'Upload File', success: success });
+      // res.status(200).send({ newItem })
+
+    } catch (error) {
+      //res.status(400).send(error)
+      res.json({ error: error })
+      // res.status(500).json({ message: err.message })
+
+    }
+
+
+
+ // });
+});
+
+// route.post('/api/photo',function(req,res){
+//   var newItem = new Item();
+//   newItem.img.data = fs.readFileSync(req.files.userPhoto.path)
+//   newItem.img.contentType = 'image/png';
+//   newItem.save();  
+//  });
 
 
 route.post('/Save_DoctorProfile',  async (req, res) => {
