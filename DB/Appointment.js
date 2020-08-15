@@ -45,6 +45,13 @@ const appointment = new mongoose.Schema({
     doctorName: {
         type: String,
     },
+    appointmentType: {
+        type: String,
+        default: 'HomeVisit'  // 'HomeVisit' or 'Online'
+    },
+    appointmentDate: {
+        type: String
+    },
     isVisitCompleted: {
         type: Boolean,  // save only from VisitCompletionIntimation UI
         default: false
