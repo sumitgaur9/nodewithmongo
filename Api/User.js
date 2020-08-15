@@ -65,8 +65,8 @@ route.post('/api/photo', upload, function (req, res) {
         image: imageFile,
       });
       newItem.save()
-      res.render('render-file', { title: 'Upload File', success: success });
-      // res.status(200).send({ newItem })
+      //res.render('render-file', { title: 'Upload File', success: success });
+       res.status(200).send({ newItem })
 
     } catch (error) {
       //res.status(400).send(error)
@@ -807,6 +807,135 @@ route.get('/Get_PharmacistWiseApptCount', async (req, res) => {
     }
     res.send(arr)
   } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+route.get('/Get_MonthlyHomeOnlineApptCount', async (req, res) => {
+  try {
+     let allappointments = await Appointment.find();
+
+     // for test local data 
+
+    //  let allappointments = [
+    //   { appointmentType:'Online' },
+    //   {appointmentDate: "2020/07/29", appointmentType:'Online' },
+    //   {appointmentDate: "2020/02/26", appointmentType:'HomeVisit' },
+    //   {appointmentDate: "2020/01/25", appointmentType:'Online' },
+    //   {appointmentDate: "2020/03/20", appointmentType:'HomeVisit' },
+    //   {appointmentDate: "2020/01/26", appointmentType:'Online' },
+    //   {appointmentDate: "2020/01/16", appointmentType:'HomeVisit' },
+    // ];
+
+      let arr = [];
+      for(i=1;i<=12;i++){
+        let obj = new Object();
+        obj.HomeVisitCount = 0;
+        obj.OnlineConsultationCount = 0;
+        obj.MonthTotal= 0;
+        for(let j=0;j<allappointments.length;j++){
+          
+          if(allappointments[j].appointmentDate){
+            let correctDate = new Date(allappointments[j].appointmentDate);
+            if(i==correctDate.getMonth()+1){
+              if (allappointments[j].appointmentType == 'HomeVisit') {
+                obj.HomeVisitCount++;
+              } else if (allappointments[j].appointmentType == 'Online') {
+                obj.OnlineConsultationCount++;
+              }
+              obj.MonthTotal++;
+              switch(correctDate.getMonth()+1){
+                case 1: 
+                obj.Month= "Jan";          
+                break;
+                case 2: 
+                obj.Month= "Feb";  
+                break;
+                case 3: 
+                obj.Month= "Mar";
+                break;
+                case 4: 
+                obj.Month= "Apr";
+                break;
+                case 5: 
+                obj.Month= "May";
+                break;
+                case 6: 
+                obj.Month= "Jun";
+                break;
+                case 7: 
+                obj.Month= "July";
+                break;
+                case 8: 
+                obj.Month= "Aug";
+                break;
+                case 9: 
+                obj.Month= "Sep";
+                break;
+                case 10: 
+                obj.Month= "Oct";
+                break;
+                case 11: 
+                obj.Month= "Nov";
+                break;
+                case 12: 
+                obj.Month= "Dec";
+                break;
+              }
+            }
+            
+            
+          }
+        }
+        arr.push(obj); 
+        for(let k = 0;k<arr.length;k++){
+          if(arr[k].Month==undefined){
+            switch(k+1){
+              case 1: 
+              arr[k].Month= "Jan";          
+              break;
+              case 2: 
+              arr[k].Month= "Feb";  
+              break;
+              case 3: 
+              arr[k].Month= "Mar";
+              break;
+              case 4: 
+              arr[k].Month= "Apr";
+              break;
+              case 5: 
+              arr[k].Month= "May";
+              break;
+              case 6: 
+              arr[k].Month= "Jun";
+              break;
+              case 7: 
+              arr[k].Month= "July";
+              break;
+              case 8: 
+              arr[k].Month= "Aug";
+              break;
+              case 9: 
+              arr[k].Month= "Sep";
+              break;
+              case 10: 
+              arr[k].Month= "Oct";
+              break;
+              case 11: 
+              arr[k].Month= "Nov";
+              break;
+              case 12: 
+              arr[k].Month= "Dec";
+              break;
+            }
+          }
+         
+        }
+      }
+  
+    res.send(arr)
+  }catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
