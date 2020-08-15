@@ -718,9 +718,194 @@ route.get('/Get_LabTestsBookings', async (req, res) => {
 
 //////////////////////////
 
+/// Doctor Dashboard API's
+
+route.get('/Get_CommonDashboardCount', async (req, res) => {
+  try {
+    const doctors = await Doctor.find()
+    const patients = await Patient.find()
+    const nurses = await Nurse.find()
+    const pharmacists = await Pharmacist.find()
+    let obj ={
+      total_no_of_doctors: doctors.length,
+      total_no_of_patients: patients.length,
+      total_no_of_nurses: nurses.length,
+      total_no_of_pharmacists: pharmacists.length,
+    }
+    res.send(obj)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 
 
+route.get('/Get_DiseaseWiseApptCount', async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+    const diseases = await Disease.find()
+    let arr=[];
+    for(let i=0;i<diseases.length;i++){
+      let obj = new Object();
+      obj.diseaseName = diseases[i].diseaseName;
+      obj.apptCount = 0;
+      for(let j=0;j<appointments.length;j++){
+        if(diseases[i].diseaseName==appointments[j].disease){
+          obj.apptCount++;
+        }
+      }
+      arr.push(obj);
+    }
+    res.send(arr)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+route.get('/Get_MedicineWiseApptCount', async (req, res) => {
+  try {
+    const patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    const medicines = await Medicine.find()
+    let arr=[];
+    for(let i=0;i<medicines.length;i++){
+      let obj = new Object();
+      obj.medicineName = medicines[i].medicineName;
+      obj.apptCount = 0;
+      for(let j=0;j<patientmedicinesforhomedelivery.length;j++){
+        if(medicines[i].medicineName==patientmedicinesforhomedelivery[j].medicineName){
+          obj.apptCount++;
+        }
+      }
+      arr.push(obj);
+    }
+    res.send(arr)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+
+
+
+route.get('/Get_PharmacistWiseApptCount', async (req, res) => {
+  try {
+    const patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    const pharmacists = await Pharmacist.find()
+    let arr=[];
+    for(let i=0;i<pharmacists.length;i++){
+      let obj = new Object();
+      obj.pharmacistName = pharmacists[i].name;
+      obj.apptCount = 0;
+      for(let j=0;j<patientmedicinesforhomedelivery.length;j++){
+        if(pharmacists[i]._id==patientmedicinesforhomedelivery[j].pharmacistID){
+          obj.apptCount++;
+        }
+      }
+      arr.push(obj);
+    }
+    res.send(arr)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+/// Patient Dashboard API's
+
+//Get my(patient) doctor wise appointment count by patient's id 
+route.get('/Get_DoctorWiseApptCount/:patientID', getFilteredPatientAppointments, async (req, res) => {
+  try {
+    let myAppt = res.subscriber;
+
+    const doctors = await Doctor.find()
+    let arr=[];
+    for(let i=0;i<doctors.length;i++){
+      let obj = new Object();
+      obj.doctorName = doctors[i].name;
+      obj.apptCount = 0;
+      for(let j=0;j<myAppt.length;j++){
+        if(doctors[i]._id==myAppt[j].doctorID){
+          obj.apptCount++;
+        }
+      }
+      arr.push(obj);
+    }
+    res.send(arr)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+//Get my(patient) individual lab test (ignore test packages) count by patient's id 
+route.get('/Get_LabTestWisetestCount/:patientID', getFilteredPatientLabtests, async (req, res) => {
+  try {
+    let mytests = res.subscriber;
+
+    const labtests = await LabTest.find()
+    let arr=[];
+    for(let i=0;i<labtests.length;i++){
+      let obj = new Object();
+      obj.testName = labtests[i].testName;
+      obj.testCount = 0;
+      for(let j=0;j<mytests.length;j++){
+        if(labtests[i]._id==mytests[j].testsData[0].testID){
+          obj.testCount++;
+        }
+      }
+      arr.push(obj);
+    }
+    res.send(arr)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getFilteredPatientLabtests(req, res, next){
+  let subscriber 
+  try{
+      subscriber = await BookLabTest.find({patientID: req.params.patientID});
+
+      if (subscriber == null){
+          return res.status(404).json({message: "Cannot find subscriber" })
+      }
+  } catch(err){
+  }
+  res.subscriber = subscriber
+  next()
+}
+
+
+//Get my(patient) individual lab test count to package count by patient's id 
+route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientLabtests, async (req, res) => {
+  try {
+    let mytests = res.subscriber;
+
+    const labtests = await LabTest.find()
+   
+      let obj = new Object();
+      obj.individualTestCount = 0;
+      obj.packageCount = 0;
+      for(let j=0;j<mytests.length;j++){
+        if(mytests[j].testsData[0].packageID!=""){
+          obj.packageCount++;
+        } else {
+          obj.individualTestCount++;
+        }
+      }     
+    res.send(obj)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+
+
+
+//////////////////////////
 
 
 
