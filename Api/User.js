@@ -740,9 +740,14 @@ route.get('/Get_CommonDashboardCount', async (req, res) => {
 
 
 
-route.get('/Get_DiseaseWiseApptCount', async (req, res) => {
+route.get('/Get_DiseaseWiseApptCount/:doctorID?', async (req, res) => {
   try {
-    const appointments = await Appointment.find()
+    let appointments;
+    if(req.params.doctorID!=undefined){
+      appointments = await Appointment.find({doctorID: req.params.doctorID});
+    } else{
+      appointments = await Appointment.find()
+    }
     const diseases = await Disease.find()
     let arr=[];
     for(let i=0;i<diseases.length;i++){
@@ -763,9 +768,14 @@ route.get('/Get_DiseaseWiseApptCount', async (req, res) => {
 })
 
 
-route.get('/Get_MedicineWiseApptCount', async (req, res) => {
+route.get('/Get_MedicineWiseApptCount/:doctorID?', async (req, res) => {
   try {
-    const patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    let patientmedicinesforhomedelivery;
+    if(req.params.doctorID!=undefined){
+      patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find({doctorID: req.params.doctorID});
+    } else{
+      patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    }
     const medicines = await Medicine.find()
     let arr=[];
     for(let i=0;i<medicines.length;i++){
@@ -789,9 +799,15 @@ route.get('/Get_MedicineWiseApptCount', async (req, res) => {
 
 
 
-route.get('/Get_PharmacistWiseApptCount', async (req, res) => {
+route.get('/Get_PharmacistWiseApptCount/:doctorID?', async (req, res) => {
   try {
-    const patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    let patientmedicinesforhomedelivery;
+    if(req.params.doctorID!=undefined){
+      patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find({doctorID: req.params.doctorID});
+    } else{
+      patientmedicinesforhomedelivery = await PatientMedicinesForHomeDelivery.find()
+    }
+
     const pharmacists = await Pharmacist.find()
     let arr=[];
     for(let i=0;i<pharmacists.length;i++){
@@ -812,13 +828,18 @@ route.get('/Get_PharmacistWiseApptCount', async (req, res) => {
 })
 
 
-route.get('/Get_MonthlyHomeOnlineApptCount', async (req, res) => {
+route.get('/Get_MonthlyHomeOnlineApptCount/:doctorID?', async (req, res) => {
   try {
-     let allappointments = await Appointment.find();
+     let appointments;
+     if(req.params.doctorID!=undefined){
+       appointments = await Appointment.find({doctorID: req.params.doctorID});
+     } else{
+       appointments = await Appointment.find()
+     }
 
      // for test local data 
 
-    //  let allappointments = [
+    //  let appointments = [
     //   { appointmentType:'Online' },
     //   {appointmentDate: "2020/07/29", appointmentType:'Online' },
     //   {appointmentDate: "2020/02/26", appointmentType:'HomeVisit' },
@@ -834,14 +855,14 @@ route.get('/Get_MonthlyHomeOnlineApptCount', async (req, res) => {
         obj.HomeVisitCount = 0;
         obj.OnlineConsultationCount = 0;
         obj.MonthTotal= 0;
-        for(let j=0;j<allappointments.length;j++){
+        for(let j=0;j<appointments.length;j++){
           
-          if(allappointments[j].appointmentDate){
-            let correctDate = new Date(allappointments[j].appointmentDate);
+          if(appointments[j].appointmentDate){
+            let correctDate = new Date(appointments[j].appointmentDate);
             if(i==correctDate.getMonth()+1){
-              if (allappointments[j].appointmentType == 'HomeVisit') {
+              if (appointments[j].appointmentType == 'HomeVisit') {
                 obj.HomeVisitCount++;
-              } else if (allappointments[j].appointmentType == 'Online') {
+              } else if (appointments[j].appointmentType == 'Online') {
                 obj.OnlineConsultationCount++;
               }
               obj.MonthTotal++;
