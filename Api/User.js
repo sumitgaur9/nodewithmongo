@@ -1158,34 +1158,53 @@ route.post('/users/login', async(req, res) => {
 
 })
 
-route.get('/users/me', auth, async(req, res) => {
-  // View logged in user profile 
-  let  roleBaseId;
-  if(req.user.role==1){
-    const docid = req.user.id
-    const doc = await Doctor.findOne({ docid });
-    //const doc = await Doctor.findOne({ participantID: docid });
-    roleBaseId = doc.id;
+route.get('/users/me', auth, async (req, res) => {
+
+  try {
+  let user;
+    // View logged in user profile 
+    let roleBaseId;
+    if (req.user.role < 1) {
+      const docid = req.user.id
+      //const doc = await Patient.findOne({ docid });
+      const doc = await Patient.findOne({ participantID: docid });
+      roleBaseId = doc.id;
+      user = doc;
+    } else if (req.user.role == 1) {
+      const docid = req.user.id
+      //const doc = await Doctor.findOne({ docid });
+      const doc = await Doctor.findOne({ participantID: docid });
+      roleBaseId = doc.id;
+      user = doc;
+    }
+    else if (req.user.role == 2) {
+      const nurseid = req.user.id
+      //const nurse = await Nurse.findOne({ docid });
+      const nurse = await Nurse.findOne({ participantID: nurseid });
+      roleBaseId = nurse.id;
+      user = doc;
+    }
+    else if (req.user.role == 3) {
+      const physioid = req.user.id
+      //const physio = await Physio.findOne({ docid });
+      const physio = await Physio.findOne({ participantID: physioid });
+      roleBaseId = physio.id;
+      user = doc;
+    }
+    else if (req.user.role == 4) {
+      const pharmacistid = req.user.id
+      //const pharmacist = await Pharmacist.findOne({ docid });
+      const pharmacist = await Pharmacist.findOne({ participantID: pharmacistid });
+      roleBaseId = pharmacist.id;
+      user = doc;
+    }
+    // res.send(req.user, roleBaseId)
+    res.status(200).send({ user, roleBaseId })
+
   }
-  if(req.user.role==2){
-    const nurseid = req.user.id
-    const nurse = await Nurse.findOne({ docid });
-    //const nurse = await Nurse.findOne({ participantID: nurseid });
-    roleBaseId = nurse.id;
+  catch (error) {
+    res.status(500).send(error)
   }
-  if(req.user.role==3){
-    const physioid = req.user.id
-    const physio = await Physio.findOne({ docid });
-    //const physio = await Physio.findOne({ participantID: physioid });
-    roleBaseId = physio.id;
-  }
-  if(req.user.role==4){
-    const pharmacistid = req.user.id
-    const pharmacist = await Pharmacist.findOne({ docid });
-    //const pharmacist = await Pharmacist.findOne({ participantID: pharmacistid });
-    roleBaseId = pharmacist.id;
-  }
-  res.send(req.user, roleBaseId)
 })
 
 route.post('/users/me/logout', auth, async (req, res) => {

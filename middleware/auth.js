@@ -3,7 +3,8 @@ const Participant = require('../DB/Participant')
 
 const auth = async(req, res, next) => {
     const token = req.header('Authorization').replace('Bearer ', '')
-    const data = jwt.verify(token, process.env.JWT_KEY)
+    // const data = jwt.verify(token, process.env.JWT_KEY)
+    const data = jwt.verify(token, "WinterIsComingGOT2019")
     try {
         const user = await Participant.findOne({ _id: data._id, 'tokens.token': token })
         if (!user) {
