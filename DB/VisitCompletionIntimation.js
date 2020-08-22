@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 // patientname,next visit need(selectbox:yes,no)
 
 const visitcompleteintimation = new mongoose.Schema({
+    role: {
+        type: Number,  //1-Doctor, 2-Nurse, 3-Physio, 
+        required: true,
+      },
     patientName: {
         type: String,
         required: true,
@@ -15,7 +19,11 @@ const visitcompleteintimation = new mongoose.Schema({
     },
     appointmentId: {
         type: String,
-        required: true,
+        //required: true,  //will use for doctor's appointment case , not for nurse's booklabtest case
+    },
+    bookLabTestId: {
+        type: String,
+        //required: true,   //will use for nurse's booklabtest case , not for doctor's appointment case
     }
 
 });

@@ -29,6 +29,8 @@ const LabTestsPackage = require('../DB/LabTestsPackage');
 const BookLabTest = require('../DB/BookLabTest');
 const Admin = require('../DB/Admin');
 const Item = require('../DB/Item');
+const LabTechnician = require('../DB/LabTechnician');
+const LabTestReport = require('../DB/LabTestReport');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -421,9 +423,15 @@ route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
       await visitcompleteintimation.save()
 
       let subscr;
-      subscr = await Appointment.findById(req.body.appointmentId)
-      subscr.isVisitCompleted = true;
-      const updatedSubscr = await subscr.save()
+      if(req.body.role==1){
+        subscr = await Appointment.findById(req.body.appointmentId)
+        subscr.isVisitCompleted = true;
+        const updatedSubscr = await subscr.save()
+      } else if(req.body.role==2){
+        subscr = await BookLabTest.findById(req.body.bookLabTestId)
+        subscr.isCollectionCollected = true;
+        const updatedSubscr1 = await subscr.save()
+      }       
 
       res.status(200).send({ visitcompleteintimation })
   } catch (error) {
@@ -656,6 +664,29 @@ route.post('/Save_LabTest',  async (req, res) => {
   }
 })
 
+// Delete LabTest
+route.delete('/Delete_LabTest/:id', getLabTest, async (req, res) => {
+  try {
+      await res.subscriber.remove()
+      res.json({ message: "Lab Test Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
+  
+  async function getLabTest(req, res, next){
+      let subscriber 
+      try{
+          subscriber = await LabTest.findById(req.params.id)
+          if (subscriber == null){
+              return res.status(404).json({message: "Cannot find subscriber" })
+          }
+      } catch(err){  
+      }
+      res.subscriber = subscriber
+      next()
+  }
+
 
 // Getting all lab tests
 route.get('/Get_LabTestsList', async (req, res) => {
@@ -680,6 +711,30 @@ route.post('/Save_LabTestsPackage',  async (req, res) => {
       res.status(400).send(error)
   }
 })
+
+// Delete LabTestPackage
+route.delete('/Delete_LabTestsPackage/:id', getLabTestPackage, async (req, res) => {
+  try {
+      await res.subscriber.remove()
+      res.json({ message: "Lab Test Package Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
+  
+  async function getLabTestPackage(req, res, next){
+      let subscriber 
+      try{
+          subscriber = await LabTestsPackage.findById(req.params.id)
+          if (subscriber == null){
+              return res.status(404).json({message: "Cannot find subscriber" })
+          }
+      } catch(err){  
+      }
+      res.subscriber = subscriber
+      next()
+  }
+
 
 
 // Getting all lab tests packages
@@ -709,12 +764,47 @@ route.post('/Save_BookLabTest',  async (req, res) => {
 // Getting all lab tests booking list
 route.get('/Get_LabTestsBookings', async (req, res) => {
   try {
-    const labtestsbookings = await BookLabTest.find()
+
+    let labtestsbookings;
+
+    if (req.body.nurseID != undefined && req.body.nurseID != '') {
+      labtestsbookings = await BookLabTest.find({ nurseID: req.body.nurseID });
+    } 
+    else if (req.body.patientID != undefined && req.body.patientID != '') {
+      labtestsbookings = await BookLabTest.find({ patientID: req.body.patientID });
+    } 
+    else if (req.body.isCollectionCollected != undefined && req.body.isCollectionCollected != '') {
+      labtestsbookings = await BookLabTest.find({ isCollectionCollected: req.body.isCollectionCollected });
+    }
+    else {
+      labtestsbookings = await BookLabTest.find();
+    }
+
+
     res.send(labtestsbookings)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
+
+
+// Save LabTestReport 
+route.post('/Save_UploadLabTestReport ',  async (req, res) => {
+  // Save a new LabTestReport
+  try {    
+      const labtestreport = new LabTestReport(req.body)
+      await labtestreport.save()
+
+        subscr = await BookLabTest.findById(req.body.bookLabTestId)
+        subscr.isReportGenerated = true;
+        const updatedSubscr = await subscr.save()      
+
+      res.status(200).send({ labtestreport })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
 
 //////////////////////////
 
@@ -1059,6 +1149,11 @@ route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientL
 
 
 
+
+/////////////////////////
+
+
+
 route.post('/users', async (req, res) => {
   // Create a new user
   try {
@@ -1067,6 +1162,7 @@ route.post('/users', async (req, res) => {
       else if(req.body.role===2){req.body.type = "Nurse" }
       else if(req.body.role===3){req.body.type = "Physio" }
       else if(req.body.role===4){req.body.type = "Pharmacist" }
+      else if(req.body.role===5){req.body.type = "LabTechnician" }      
       else if(req.body.role===11){req.body.type = "Admin" }      
       else {req.body.type = "Individual" }
     }
@@ -1124,6 +1220,16 @@ route.post('/users', async (req, res) => {
         const pharmacist = new Pharmacist(obj)
         await pharmacist.save();
         roleBaseId= pharmacist.id;
+      } else if(req.body.role==5){
+        //LabTechnician
+        let obj = {
+          name: req.body.name,
+          email: req.body.email,
+          participantID: user.id,          
+        }
+        const labtechnician = new LabTechnician(obj)
+        await labtechnician.save();
+        roleBaseId= labtechnician.id;
       }  else if(req.body.role==11){
         //Admin
         let obj = {
@@ -1167,6 +1273,9 @@ route.post('/users/login', async(req, res) => {
       }else if(user.role==4){        
         const pharmacist = await Pharmacist.findOne({ participantID });
         roleBaseId = pharmacist.id;
+      }else if(user.role==5){        
+        const labtechician = await LabTechnician.findOne({ participantID });
+        roleBaseId = labtechician.id;
       }else if(user.role==11){        
         const admin = await Admin.findOne({ participantID });
         roleBaseId = admin.id;
@@ -1203,21 +1312,28 @@ route.get('/users/me', auth, async (req, res) => {
       //const nurse = await Nurse.findOne({ docid });
       const nurse = await Nurse.findOne({ participantID: nurseid });
       roleBaseId = nurse.id;
-      user = doc;
+      user = nurse;
     }
     else if (req.user.role == 3) {
       const physioid = req.user.id
       //const physio = await Physio.findOne({ docid });
       const physio = await Physio.findOne({ participantID: physioid });
       roleBaseId = physio.id;
-      user = doc;
+      user = physio;
     }
     else if (req.user.role == 4) {
       const pharmacistid = req.user.id
       //const pharmacist = await Pharmacist.findOne({ docid });
       const pharmacist = await Pharmacist.findOne({ participantID: pharmacistid });
       roleBaseId = pharmacist.id;
-      user = doc;
+      user = pharmacist;
+    }
+    else if (req.user.role == 5) {
+      const labtechicianid = req.user.id
+      //const labtechnician = await LabTechnician.findOne({ docid });
+      const labtechnician = await LabTechnician.findOne({ participantID: labtechicianid });
+      roleBaseId = labtechnician.id;
+      user = labtechnician;
     }
     // res.send(req.user, roleBaseId)
     res.status(200).send({ user, roleBaseId })

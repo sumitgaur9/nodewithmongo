@@ -33,6 +33,12 @@ const booklabtest = new mongoose.Schema({
     patientPIN: {
         type: String,
     },
+    nurseID: {
+        type: String,
+    },
+    nurseName: {
+        type: String,
+    },
     testType: {    //individual or package
         type: String,
         required: true
@@ -50,6 +56,10 @@ const booklabtest = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
+    },
+    isCollectionCollected: {
+        type: Boolean,  // save only from VisitCompletionIntimation UI
+        default: false
     },
     isReportGenerated: {
         type: Boolean,  // save only from VisitCompletionIntimation UI
