@@ -859,6 +859,23 @@ route.post('/Save_UploadLabTestReport', upload, async (req, res)=> {
 
 
 
+
+route.get('/Get_UploadedTestReportbyBookLabTestID/:BookLabTestID', async (req, res) => {
+  try {
+    
+      let labtestreport = await LabTestReport.findOne({bookLabTestId: req.params.BookLabTestID});
+      let filename = labtestreport.reportData;      
+    var file = fs.createReadStream('./public/uploads/'+filename);
+    var stat = fs.statSync('./public/uploads/'+filename);
+    res.setHeader('Content-Length', stat.size);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename='+filename);
+    file.pipe(res);
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 //////////////////////////
 
 /// Doctor Dashboard API's
