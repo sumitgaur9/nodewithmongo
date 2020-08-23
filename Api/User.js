@@ -414,6 +414,49 @@ async function getPhysio(req, res, next){
     next()
 }
 
+
+route.put('/Update_LabTechnicianProfile/:id', getLabTechnician, async (req, res) => {
+  //Update a existing Doctor with id
+  try {
+    const labtech = await LabTechnician.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    res.send(labtech)
+    
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
+// Get one doctor profile
+route.get('/Get_LabTechnicianProfile/:id', getLabTechnician, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+route.get('/Get_LabTechniciansList', async (req, res) => {
+  try {
+    const labtechnicians = await LabTechnician.find()
+    res.send(labtechnicians)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getLabTechnician(req, res, next){
+  let subscriber 
+  try{
+      subscriber = await LabTechnician.findById(req.params.id)
+      if (subscriber == null){
+          return res.status(404).json({message: "Cannot find subscriber" })
+      }
+  } catch(err){
+  }
+  res.subscriber = subscriber
+  next()
+}
+
 //////////////
 //visit complete for all other than pharmacist
 route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
@@ -789,21 +832,27 @@ route.get('/Get_LabTestsBookings', async (req, res) => {
 
 
 // Save LabTestReport 
-route.post('/Save_UploadLabTestReport ',  async (req, res) => {
-  // Save a new LabTestReport
-  try {    
-      const labtestreport = new LabTestReport(req.body)
-      await labtestreport.save()
+route.post('/Save_UploadLabTestReport', upload, async (req, res)=> {
+      try {
+      var pdfFile = req.files[0].filename;
+      var success = req.files[0].filename + "Uploaded Successfully";
+      var newLabTestReport = new LabTestReport({
+        reportData: pdfFile,
+      });
+      newLabTestReport.save()
 
-        subscr = await BookLabTest.findById(req.body.bookLabTestId)
-        subscr.isReportGenerated = true;
-        const updatedSubscr = await subscr.save()      
+      subscr = await BookLabTest.findById(req.body.bookLabTestId)
+      subscr.isReportGenerated = true;
+      const updatedSubscr = await subscr.save()      
 
-      res.status(200).send({ labtestreport })
-  } catch (error) {
-      res.status(400).send(error)
-  }
-})
+       res.status(200).send({ newLabTestReport })
+
+    } catch (error) {
+      res.json({ error: error })
+
+    }
+});
+
 
 
 //////////////////////////
