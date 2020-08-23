@@ -838,6 +838,10 @@ route.post('/Save_UploadLabTestReport', upload, async (req, res)=> {
       var success = req.files[0].filename + "Uploaded Successfully";
       var newLabTestReport = new LabTestReport({
         reportData: pdfFile,
+        bookLabTestId: req.body.bookLabTestId,
+        labTechnicanID: req.body.labTechnicanID,
+        labTechnicanName: req.body.labTechnicanName,
+        reportGenerationDate: req.body.reportGenerationDate,
       });
       newLabTestReport.save()
 
