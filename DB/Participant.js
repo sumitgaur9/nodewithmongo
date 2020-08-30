@@ -20,6 +20,9 @@ const participant = new mongoose.Schema({
         }
       }
     },
+    phoneno: {
+        type: String,
+    },
     password: {
       type: String,
       required: true,
