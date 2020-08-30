@@ -45,7 +45,7 @@ route.post('/GenerateOTP', async (req, res) => {
   try {
     const user = await Participant.findOne({ email:req.body.email })
     if (!user) {
-      throw new Error({ error: 'Invalid login credentials' })
+      throw new Error({ error: 'Email ID does not exist' })
     } 
     if (!user.phoneno) {
       throw new Error({ error: 'Phone number for user is not defined' })
