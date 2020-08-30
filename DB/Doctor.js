@@ -39,6 +39,9 @@ const doctor = new mongoose.Schema({
     timeAvailablity: {
         type: String,
     },
+    description: {
+        type: String,
+      },
     charges: {
         type: Number,
         default: 0,

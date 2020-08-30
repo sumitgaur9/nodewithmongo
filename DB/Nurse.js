@@ -43,6 +43,9 @@ const nurse = new mongoose.Schema({
         default: 0,
        // required: true,
     },
+    description: {
+      type: String,
+    },
     area: {
         type: String,
     },

@@ -29,6 +29,9 @@ const admin = new mongoose.Schema({
         type: String,
         default: '',
     },
+    description: {
+      type: String,
+    },
     phoneno: {
         type: String,
     }

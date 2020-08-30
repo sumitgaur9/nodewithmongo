@@ -39,6 +39,9 @@ const patient = new mongoose.Schema({
     prefferedTime: {
         type: String,
     },
+    description: {
+      type: String,
+    },
     address: {
         type: String,
     },
