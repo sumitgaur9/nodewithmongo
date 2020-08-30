@@ -1249,73 +1249,44 @@ route.post('/users', async (req, res) => {
       await user.save()
       const token = await user.generateAuthToken()
       let roleBaseId;
+      let obj = {
+        name: req.body.name,
+        email: req.body.email,
+        participantID: user.id,          
+        phoneno: user.phoneno,          
+      }
       if(req.body.role < 1){
         //Patient(Individual)
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const patient = new Patient(obj)
         await patient.save();
         roleBaseId= patient.id;
       } else if(req.body.role==1){
-        //Doctor
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
+        //Doctor        
         const doctor = new Doctor(obj)
         await doctor.save();
         roleBaseId= doctor.id;
       } else if(req.body.role==2){
         //Nurse
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const nurse = new Nurse(obj)
         await nurse.save();
         roleBaseId= nurse.id;
       } else if(req.body.role==3){
         //Physio
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const physio = new Physio(obj)
         await physio.save();
         roleBaseId = physio.id;
       } else if(req.body.role==4){
         //Pharmacist
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const pharmacist = new Pharmacist(obj)
         await pharmacist.save();
         roleBaseId= pharmacist.id;
       } else if(req.body.role==5){
         //LabTechnician
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const labtechnician = new LabTechnician(obj)
         await labtechnician.save();
         roleBaseId= labtechnician.id;
       }  else if(req.body.role==11){
         //Admin
-        let obj = {
-          name: req.body.name,
-          email: req.body.email,
-          participantID: user.id,          
-        }
         const admin = new Admin(obj)
         await admin.save();
         roleBaseId = admin.id; //should be null not 'admin.id'
