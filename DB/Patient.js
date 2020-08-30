@@ -29,14 +29,8 @@ const patient = new mongoose.Schema({
     },
     disease: {
         type: String
-    },
-    requiredDoctor: {
-        type: String,
-    },    
+    }, 
     phoneno: {
-        type: String,
-    },
-    prefferedTime: {
         type: String,
     },
     description: {
