@@ -616,15 +616,24 @@ route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredDoctorAppointments, a
   }
 })
 
-async function getFilteredDoctorAppointments(req, res, next){
-  let subscriber 
-  try{
-      subscriber = await Appointment.find({doctorID: req.params.doctorID});
-
-      if (subscriber == null){
-          return res.status(404).json({message: "Cannot find subscriber" })
-      }
-  } catch(err){
+async function getFilteredDoctorAppointments(req, res, next) {
+  let subscriber
+  try {
+    if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'desc') {
+      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: 1 });
+    } else if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'asc') {
+      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: -1 });
+    } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'desc') {
+      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: 1 });
+    } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
+      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: -1 });
+    } else {
+      subscriber = await Appointment.find({ doctorID: req.params.doctorID });
+    }
+    if (subscriber == null) {
+      return res.status(404).json({ message: "Cannot find subscriber" })
+    }
+  } catch (err) {
   }
   res.subscriber = subscriber
   next()
