@@ -121,7 +121,7 @@ route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     doct.image = imageFile;
      await doct.save()
-    res.send(doct)
+     res.status(200).send({ doct })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
