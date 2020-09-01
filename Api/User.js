@@ -117,11 +117,11 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
 route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
   //Update a existing Doctor with id
   try {
-    var imageFile = req.files[0].filename;
+    let imageFile = req.files[0].filename;
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     doct.image = imageFile;
-     await doct.save()
-     res.status(200).send({ doct })
+    await doct.save()
+    res.status(200).send({ doct })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
@@ -181,10 +181,13 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
-route.put('/Update_PatientProfile/:id', getPatient, async (req, res) => {
+route.put('/Update_PatientProfile/:id', upload, getPatient, async (req, res) => {
   // Update a existing Patient with id
   try {
+    let imageFile = req.files[0].filename;
     const pat = await Patient.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    pat.image = imageFile;
+     await pat.save()
     res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
@@ -246,11 +249,14 @@ route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
     }
   })
 
-  route.put('/Update_PharmacistProfile/:id', getPharmacist, async (req, res) => {
+  route.put('/Update_PharmacistProfile/:id', upload, getPharmacist, async (req, res) => {
     // Update a existing Pharmacist with id
     try {
-      const pat = await Pharmacist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-      res.send(pat)  
+      let imageFile = req.files[0].filename;
+      const pharmacist = await Pharmacist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+      pharmacist.image = imageFile;
+      await pharmacist.save()
+      res.send(pharmacist)  
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
@@ -311,10 +317,13 @@ route.post('/Save_NurseProfile',  async (req, res) => {
   }
 })
 
-route.put('/Update_NurseProfile/:id', getNurse, async (req, res) => {
+route.put('/Update_NurseProfile/:id', upload, getNurse, async (req, res) => {
   // Update a existing Nurse with id
   try {
-    const pat = await Nurse.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    let imageFile = req.files[0].filename;
+    const nurse = await Nurse.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    nurse.image = imageFile;
+    await nurse.save()
     res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
@@ -377,10 +386,13 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
   }
 })
 
-route.put('/Update_PhysioProfile/:id', getPhysio, async (req, res) => {
+route.put('/Update_PhysioProfile/:id', upload, getPhysio, async (req, res) => {
   // Update a existing Physio with id
   try {
-    const pat = await Physio.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    let imageFile = req.files[0].filename;
+    const physio = await Physio.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    physio.image = imageFile;
+    await physio.save()
     res.send(pat)
   } catch (err) {
     res.status(400).json({ message: err.message })
@@ -430,12 +442,14 @@ async function getPhysio(req, res, next){
 }
 
 
-route.put('/Update_LabTechnicianProfile/:id', getLabTechnician, async (req, res) => {
+route.put('/Update_LabTechnicianProfile/:id', upload, getLabTechnician, async (req, res) => {
   //Update a existing Doctor with id
   try {
+    let imageFile = req.files[0].filename;
     const labtech = await LabTechnician.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    res.send(labtech)
-    
+    labtech.image = imageFile;
+    await labtech.save()
+    res.send(labtech)    
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
