@@ -134,10 +134,12 @@ route.post('/Save_DoctorProfile', upload, async (req, res) => {
 //   }
 // })
 
-route.put('/Update_DoctorProfile/:id', getDoctor, async (req, res) => {
+route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
   //Update a existing Doctor with id
   try {
+    var imageFile = req.files[0].filename;
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    doct.image = imageFile;
     res.send(doct)
     
   } catch (err) {
