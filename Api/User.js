@@ -102,37 +102,17 @@ route.post('/api/photo', upload, function (req, res) {
 
 
 
-route.post('/Save_DoctorProfile', upload, async (req, res) => {
-  try {
-    var imageFile = req.files[0].filename;
-    //  var success = req.files[0].filename + "Uploaded Successfully";
 
-    var doctor = new Doctor(req.body)
-    doctor.image = imageFile;
-    // var newLabTestReport = new Doctor({
-    //   reportData: imageFile,
-    //   bookLabTestId: req.body.bookLabTestId,
-    //   labTechnicanID: req.body.labTechnicanID,
-    //   labTechnicanName: req.body.labTechnicanName,
-    //   reportGenerationDate: req.body.reportGenerationDate,
-    // });
-    doctor.save();
-    res.status(200).send({ doctor })
+route.post('/Save_DoctorProfile',  async (req, res) => {
+  // Create a new Doctor
+  try {    
+      const doctor = new Doctor(req.body)
+      await doctor.save()
+      res.status(200).send({ doctor })
   } catch (error) {
-    res.json({ error: error })
+      res.status(400).send(error)
   }
-});
-
-// route.post('/Save_DoctorProfile',  async (req, res) => {
-//   // Create a new Doctor
-//   try {    
-//       const doctor = new Doctor(req.body)
-//       await doctor.save()
-//       res.status(200).send({ doctor })
-//   } catch (error) {
-//       res.status(400).send(error)
-//   }
-// })
+})
 
 route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
   //Update a existing Doctor with id
@@ -140,8 +120,8 @@ route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
     var imageFile = req.files[0].filename;
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     doct.image = imageFile;
+     await doct.save()
     res.send(doct)
-    
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
