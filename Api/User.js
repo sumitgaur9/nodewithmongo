@@ -117,7 +117,7 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
 route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
   //Update a existing Doctor with id
   try {
-    let imageFile='';
+    let imageFile=''; 
     if(req.files && req.files.length){
       imageFile = req.files[0].filename;
     } else {
