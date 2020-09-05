@@ -31,6 +31,7 @@ const Admin = require('../DB/Admin');
 const Item = require('../DB/Item');
 const LabTechnician = require('../DB/LabTechnician');
 const LabTestReport = require('../DB/LabTestReport');
+const ItemForImageByteArray = require('../DB/itemforimagebytearray');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -70,34 +71,65 @@ var Storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ 
-  storage: Storage 
+var upload = multer({
+  storage: Storage
 }).any('file');
 
 
-route.post('/api/photo', upload, function (req, res) {
 
-      try {
-      var imageFile = req.files[0].filename;
-      var success = req.files[0].filename + "Uploaded Successfully";
-      var newItem = new Item({
-        image: imageFile,
-      });
-      newItem.save()
-      //res.render('render-file', { title: 'Upload File', success: success });
-       res.status(200).send({ newItem })
-
-    } catch (error) {
-      //res.status(400).send(error)
-      res.json({ error: error })
-      // res.status(500).json({ message: err.message })
-
-    }
+// Getting all api photos
+route.get('/Get_APIPhoto', async (req, res) => {
+  try {
+    const images = await ItemForImageByteArray.find()
+    res.send(images[0])
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 
+route.post('/api/photo', upload,  (req, res)=> {
 
- // });
+  try {  
+    var newItem = new ItemForImageByteArray({ 
+      image: { 
+          data: fs.readFileSync(path.join('./public/uploads/' + req.files[0].filename)), 
+          contentType: 'image/png'
+      }
+  }) 
+    newItem.save()
+    res.status(200).send({ newItem })
+
+  } catch (error) {
+    res.json({ error: error })
+  }
+
 });
+
+
+// route.post('/api/photo', upload, function (req, res) {
+
+//       try {
+//       var imageFile = req.files[0].filename;
+//       var success = req.files[0].filename + "Uploaded Successfully";
+//       var newItem = new Item({
+//         image: imageFile,
+//       });
+//       newItem.save()
+//       //res.render('render-file', { title: 'Upload File', success: success });
+//        res.status(200).send({ newItem })
+
+//     } catch (error) {
+//       //res.status(400).send(error)
+//       res.json({ error: error })
+//       // res.status(500).json({ message: err.message })
+
+//     }
+
+
+
+//  // });
+// });
 
 
 
@@ -114,24 +146,50 @@ route.post('/Save_DoctorProfile',  async (req, res) => {
   }
 })
 
-route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
+route.put('/Update_DoctorProfile/:id', upload, getDoctor, async (req, res) => {
   //Update a existing Doctor with id
   try {
-    let imageFile=''; 
-    if(req.files && req.files.length){
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
       imageFile = req.files[0].filename;
-    } else {
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {
       const DoctorProfileBeforeChange = await Doctor.findById(req.params.id)
-      imageFile =  DoctorProfileBeforeChange.image;
+      newImage = DoctorProfileBeforeChange.newimage;
     }
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    doct.image = imageFile;
+    doct.newimage = newImage;
      await doct.save()
     res.status(200).send({ doct })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
 })
+
+
+// route.put('/Update_DoctorProfile/:id',upload, getDoctor, async (req, res) => {
+//   //Update a existing Doctor with id
+//   try {
+//     let imageFile=''; 
+//     if(req.files && req.files.length){
+//       imageFile = req.files[0].filename;
+//     } else {
+//       const DoctorProfileBeforeChange = await Doctor.findById(req.params.id)
+//       imageFile =  DoctorProfileBeforeChange.image;
+//     }
+//     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+//     doct.image = imageFile;
+//      await doct.save()
+//     res.status(200).send({ doct })
+//   } catch (err) {
+//     res.status(400).json({ message: err.message })
+//   }
+// })
 
 // Get one doctor profile
 route.get('/Get_DoctorProfile/:id', getDoctor, async (req, res) => {

@@ -28,6 +28,11 @@ const doctor = new mongoose.Schema({
         type: String,
         default: '',
     },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
     experties: {
         type: String,
         default: '',
