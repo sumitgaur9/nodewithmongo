@@ -252,14 +252,46 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
+// route.put('/Update_PatientProfile/:id', upload, getPatient, async (req, res) => {
+//   // Update a existing Patient with id
+//   try {
+//     let imageFile = req.files[0].filename;
+//     const pat = await Patient.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+//     pat.image = imageFile;
+//      await pat.save()
+//     res.send(pat)
+//   } catch (err) {
+//     res.status(400).json({ message: err.message })
+//   }
+// })
+
 route.put('/Update_PatientProfile/:id', upload, getPatient, async (req, res) => {
-  // Update a existing Patient with id
+  //Update a existing Patient with id
   try {
-    let imageFile = req.files[0].filename;
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {
+      const PatientProfileBeforeChange = await Patient.findById(req.params.id)
+      if(PatientProfileBeforeChange.newimage){
+        newImage = PatientProfileBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
+    }
     const pat = await Patient.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    pat.image = imageFile;
+    pat.newimage = newImage;
      await pat.save()
-    res.send(pat)
+    res.status(200).send({ pat })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
@@ -320,14 +352,46 @@ route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
     }
   })
 
+  // route.put('/Update_PharmacistProfile/:id', upload, getPharmacist, async (req, res) => {
+  //   // Update a existing Pharmacist with id
+  //   try {
+  //     let imageFile = req.files[0].filename;
+  //     const pharmacist = await Pharmacist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  //     pharmacist.image = imageFile;
+  //     await pharmacist.save()
+  //     res.send(pharmacist)  
+  //   } catch (err) {
+  //     res.status(400).json({ message: err.message })
+  //   }
+  // })
+
   route.put('/Update_PharmacistProfile/:id', upload, getPharmacist, async (req, res) => {
-    // Update a existing Pharmacist with id
+    //Update a existing Pharmacist with id
     try {
-      let imageFile = req.files[0].filename;
+      let imageFile='';    
+      var newImage = {};
+      if (req.files && req.files.length) {
+        imageFile = req.files[0].filename;
+        newImage = {
+          data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+          contentType: 'image/png'
+        }
+      } 
+      else {
+        const PharmacistProfileBeforeChange = await Pharmacist.findById(req.params.id)
+        if(PharmacistProfileBeforeChange.newimage){
+          newImage = PharmacistProfileBeforeChange.newimage;
+        } else {
+          newImage = {
+            data: [],
+            contentType: 'image/png'
+          }
+        }
+      }
       const pharmacist = await Pharmacist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-      pharmacist.image = imageFile;
-      await pharmacist.save()
-      res.send(pharmacist)  
+      pharmacist.newimage = newImage;
+       await pharmacist.save()
+      res.status(200).send({ pharmacist })
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
@@ -388,18 +452,51 @@ route.post('/Save_NurseProfile',  async (req, res) => {
   }
 })
 
+// route.put('/Update_NurseProfile/:id', upload, getNurse, async (req, res) => {
+//   // Update a existing Nurse with id
+//   try {
+//     let imageFile = req.files[0].filename;
+//     const nurse = await Nurse.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+//     nurse.image = imageFile;
+//     await nurse.save()
+//     res.send(pat)
+//   } catch (err) {
+//     res.status(400).json({ message: err.message })
+//   }
+// })
+
 route.put('/Update_NurseProfile/:id', upload, getNurse, async (req, res) => {
-  // Update a existing Nurse with id
+  //Update a existing Nurse with id
   try {
-    let imageFile = req.files[0].filename;
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {
+      const NurseProfileBeforeChange = await Nurse.findById(req.params.id)
+      if(NurseProfileBeforeChange.newimage){
+        newImage = NurseProfileBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
+    }
     const nurse = await Nurse.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    nurse.image = imageFile;
-    await nurse.save()
-    res.send(pat)
+    nurse.newimage = newImage;
+     await nurse.save()
+    res.status(200).send({ nurse })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
 })
+
 
   // Get one nurse profile
   route.get('/Get_NurseProfile/:id', getNurse, async (req, res) => {
@@ -457,14 +554,46 @@ route.post('/Save_PhysioProfile',  async (req, res) => {
   }
 })
 
+// route.put('/Update_PhysioProfile/:id', upload, getPhysio, async (req, res) => {
+//   // Update a existing Physio with id
+//   try {
+//     let imageFile = req.files[0].filename;
+//     const physio = await Physio.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+//     physio.image = imageFile;
+//     await physio.save()
+//     res.send(pat)
+//   } catch (err) {
+//     res.status(400).json({ message: err.message })
+//   }
+// })
+
 route.put('/Update_PhysioProfile/:id', upload, getPhysio, async (req, res) => {
-  // Update a existing Physio with id
+  //Update a existing Physio with id
   try {
-    let imageFile = req.files[0].filename;
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {
+      const PhysioProfileBeforeChange = await Physio.findById(req.params.id)
+      if(PhysioProfileBeforeChange.newimage){
+        newImage = PhysioProfileBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
+    }
     const physio = await Physio.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    physio.image = imageFile;
-    await physio.save()
-    res.send(pat)
+    physio.newimage = newImage;
+     await physio.save()
+    res.status(200).send({ physio })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
@@ -513,20 +642,52 @@ async function getPhysio(req, res, next){
 }
 
 
+// route.put('/Update_LabTechnicianProfile/:id', upload, getLabTechnician, async (req, res) => {
+//   //Update a existing LabTechnician with id
+//   try {
+//     let imageFile = req.files[0].filename;
+//     const labtech = await LabTechnician.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+//     labtech.image = imageFile;
+//     await labtech.save()
+//     res.send(labtech)    
+//   } catch (err) {
+//     res.status(400).json({ message: err.message })
+//   }
+// })
+
 route.put('/Update_LabTechnicianProfile/:id', upload, getLabTechnician, async (req, res) => {
-  //Update a existing Doctor with id
+  //Update a existing LabTechnician with id
   try {
-    let imageFile = req.files[0].filename;
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {
+      const LabTechnicianProfileBeforeChange = await LabTechnician.findById(req.params.id)
+      if(LabTechnicianProfileBeforeChange.newimage){
+        newImage = LabTechnicianProfileBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
+    }
     const labtech = await LabTechnician.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    labtech.image = imageFile;
-    await labtech.save()
-    res.send(labtech)    
+    labtech.newimage = newImage;
+     await labtech.save()
+    res.status(200).send({ labtech })
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
 })
 
-// Get one doctor profile
+// Get one LabTechnician profile
 route.get('/Get_LabTechnicianProfile/:id', getLabTechnician, async (req, res) => {
   try {
     res.send(res.subscriber)
