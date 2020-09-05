@@ -27,6 +27,11 @@ const pharmacist = new mongoose.Schema({
     image: {
         type: String,
     },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
     experties: {
         type: String,
         default: '',

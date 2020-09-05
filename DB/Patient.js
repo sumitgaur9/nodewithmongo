@@ -27,6 +27,11 @@ const patient = new mongoose.Schema({
     image: {
         type: String,
     },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
     disease: {
         type: String
     }, 

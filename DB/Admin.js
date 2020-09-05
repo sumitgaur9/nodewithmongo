@@ -29,6 +29,11 @@ const admin = new mongoose.Schema({
         type: String,
         default: '',
     },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
     description: {
       type: String,
     },
