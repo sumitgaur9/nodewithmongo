@@ -160,7 +160,14 @@ route.put('/Update_DoctorProfile/:id', upload, getDoctor, async (req, res) => {
     } 
     else {
       const DoctorProfileBeforeChange = await Doctor.findById(req.params.id)
-      newImage = DoctorProfileBeforeChange.newimage;
+      if(DoctorProfileBeforeChange.newimage){
+        newImage = DoctorProfileBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
     }
     const doct = await Doctor.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     doct.newimage = newImage;
