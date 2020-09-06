@@ -32,6 +32,7 @@ const Item = require('../DB/Item');
 const LabTechnician = require('../DB/LabTechnician');
 const LabTestReport = require('../DB/LabTestReport');
 const ItemForImageByteArray = require('../DB/itemforimagebytearray');
+const ItemForWebsite = require('../DB/ItemForWebsite');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -131,8 +132,52 @@ route.post('/api/photo', upload,  (req, res)=> {
 //  // });
 // });
 
+// Upload images for website
+route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
+  try {
+
+    if (req.files && req.files.length) {
+      let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+      let doc = (docs && docs.length)? docs[0]:null;
+      var newItem = {
+        image: {
+          data: fs.readFileSync(path.join('./public/uploads/' + req.files[0].filename)),
+          contentType: 'image/png'
+        },
+        locationEnum: req.body.locationEnum
+      }
+      if (!doc) {
+        const newrecord = new ItemForWebsite(newItem)
+        await newrecord.save();
+      } else {
+        doc.image = newItem.image;
+        await doc.save();
+      }
+    } else {
+      throw new Error({ error: 'Image upload is MUST !!!' })
+    }
+    newItem.save()
+    res.status(200).send({ newItem })
+
+  } catch (error) {
+    res.json({ error: error })
+  }
+});
 
 
+// Getting image for website by  locationEnum
+route.get('/Get_WebsiteImageByLocationEnum', async (req, res) => {
+  try {
+    if(!req.body.locationEnum){
+      throw new Error({ error: 'Please provide the locationEnum' });
+    }
+    let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+    let doc = (docs && docs.length)? docs[0]:null;
+    res.send(doc)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 
 route.post('/Save_DoctorProfile',  async (req, res) => {
@@ -1598,6 +1643,50 @@ route.post('/users/login', async(req, res) => {
   }
 
 })
+
+route.post('/users/changePassword', async (req, res) => {
+  //Change password of current logged in registered user
+  try {
+    let email = req.body.email;
+    let password = req.body.oldPassword;
+    let newPassword = req.body.newPassword;
+    const user = await Participant.findByCredentials(email, password)
+    if (req.body.oldPassword == req.body.newPassword) {
+      return res.status(401).send({ error: 'New password must be different from Old password' })
+    }
+    else if (!user) {
+      return res.status(401).send({ error: 'Username or Password Wrong!!! Check authentication credentials' })
+    }
+    user.password = newPassword;
+    await user.save();
+    res.send({ user })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+
+})
+
+route.post('/users/forgotPassword', async (req, res) => {
+  //Change password of current logged in registered user
+  try {
+    let email = req.body.email;
+    let newPassword = req.body.newPassword;
+    const user = await Participant.findOne({ email:req.body.email })
+     if (!user) {
+      return res.status(401).send({ error: 'Email does not exist!!!' })
+    }
+    user.password = newPassword;
+    await user.save();
+    res.send({ user })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+
+})
+
+
+
+
 
 route.get('/users/me', auth, async (req, res) => {
 
