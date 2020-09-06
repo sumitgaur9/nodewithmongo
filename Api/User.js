@@ -166,12 +166,12 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
 
 
 // Getting image for website by  locationEnum
-route.get('/Get_WebsiteImageByLocationEnum', async (req, res) => {
+route.get('/Get_WebsiteImageByLocationEnum/:locationEnum', async (req, res) => {
   try {
-    if(!req.body.locationEnum){
+    if(!req.params.locationEnum){
       throw new Error({ error: 'Please provide the locationEnum' });
     }
-    let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.body.locationEnum) })
+    let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.params.locationEnum) })
     let doc = (docs && docs.length)? docs[0]:null;
     res.send(doc)
   } catch (err) {
