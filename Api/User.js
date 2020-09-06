@@ -137,14 +137,14 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
   try {
 
     if (req.files && req.files.length) {
-      let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+      let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.body.locationEnum) })
       let doc = (docs && docs.length)? docs[0]:null;
       var newItem = {
         image: {
           data: fs.readFileSync(path.join('./public/uploads/' + req.files[0].filename)),
           contentType: 'image/png'
         },
-        locationEnum: req.body.locationEnum
+        locationEnum: parseInt(req.body.locationEnum)
       }
       if (!doc) {
         const newrecord = new ItemForWebsite(newItem)
@@ -156,7 +156,7 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
     } else {
       throw new Error({ error: 'Image upload is MUST !!!' })
     }
-    newItem.save()
+   
     res.status(200).send({ newItem })
 
   } catch (error) {
@@ -171,7 +171,7 @@ route.get('/Get_WebsiteImageByLocationEnum', async (req, res) => {
     if(!req.body.locationEnum){
       throw new Error({ error: 'Please provide the locationEnum' });
     }
-    let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+    let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.body.locationEnum) })
     let doc = (docs && docs.length)? docs[0]:null;
     res.send(doc)
   } catch (err) {
