@@ -180,6 +180,17 @@ route.get('/Get_WebsiteImageByLocationEnum/:locationEnum', async (req, res) => {
 })
 
 
+route.get('/Get_WebsiteImageByLocationEnumList', async (req, res) => {
+  try {
+    const ItemForWebsiteList = await ItemForWebsite.find()
+    res.send(ItemForWebsiteList)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+
 route.post('/Save_DoctorProfile',  async (req, res) => {
   // Create a new Doctor
   try {    
