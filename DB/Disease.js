@@ -7,6 +7,7 @@ const disease = new mongoose.Schema({
     diseaseName: {
         type: String,
         required: true,
+        unique: true,
         trim: true
     },
     takeCareBy: {
