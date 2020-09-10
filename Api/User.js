@@ -137,14 +137,14 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
   try {
 
     if (req.files && req.files.length) {
-      let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+      let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.body.locationEnum) })
       let doc = (docs && docs.length)? docs[0]:null;
       var newItem = {
         image: {
           data: fs.readFileSync(path.join('./public/uploads/' + req.files[0].filename)),
           contentType: 'image/png'
         },
-        locationEnum: req.body.locationEnum
+        locationEnum: parseInt(req.body.locationEnum)
       }
       if (!doc) {
         const newrecord = new ItemForWebsite(newItem)
@@ -156,7 +156,7 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
     } else {
       throw new Error({ error: 'Image upload is MUST !!!' })
     }
-    newItem.save()
+   
     res.status(200).send({ newItem })
 
   } catch (error) {
@@ -166,18 +166,29 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
 
 
 // Getting image for website by  locationEnum
-route.get('/Get_WebsiteImageByLocationEnum', async (req, res) => {
+route.get('/Get_WebsiteImageByLocationEnum/:locationEnum', async (req, res) => {
   try {
-    if(!req.body.locationEnum){
+    if(!req.params.locationEnum){
       throw new Error({ error: 'Please provide the locationEnum' });
     }
-    let docs = await ItemForWebsite.find({ locationEnum: req.body.locationEnum })
+    let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.params.locationEnum) })
     let doc = (docs && docs.length)? docs[0]:null;
     res.send(doc)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
+
+
+route.get('/Get_WebsiteImageByLocationEnumList', async (req, res) => {
+  try {
+    const ItemForWebsiteList = await ItemForWebsite.find()
+    res.send(ItemForWebsiteList)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 
 
 route.post('/Save_DoctorProfile',  async (req, res) => {
@@ -904,8 +915,8 @@ route.post('/Save_BookAppointment',  async (req, res) => {
   }
 })
 
-//Get my(doctor) appointments list by doctor's id
-route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredDoctorAppointments, async (req, res) => {
+//Get my(doctor) appointments list by doctor's id (now docid coming in body, not in param but API name is not changed.)
+route.post('/Get_AppointmentsByDocID', getFilteredDoctorAppointments, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
@@ -917,15 +928,15 @@ async function getFilteredDoctorAppointments(req, res, next) {
   let subscriber
   try {
     if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: 1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: 1 });
     } else if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: -1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: -1 });
     } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: 1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: 1 });
     } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: -1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: -1 });
     } else {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID });
     }
     if (subscriber == null) {
       return res.status(404).json({ message: "Cannot find subscriber" })
