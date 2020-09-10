@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // diseaseName,takeCareBy
 
 const disease = new mongoose.Schema({
-    diseaseName: {
+    diseaseName1: {
         type: String,
         required: true,
         unique: true,
