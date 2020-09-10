@@ -915,8 +915,8 @@ route.post('/Save_BookAppointment',  async (req, res) => {
   }
 })
 
-//Get my(doctor) appointments list by doctor's id
-route.get('/Get_AppointmentsByDocID/:doctorID', getFilteredDoctorAppointments, async (req, res) => {
+//Get my(doctor) appointments list by doctor's id (now docid coming in body, not in param but API name is not changed.)
+route.post('/Get_AppointmentsByDocID', getFilteredDoctorAppointments, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
@@ -928,15 +928,15 @@ async function getFilteredDoctorAppointments(req, res, next) {
   let subscriber
   try {
     if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: 1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: 1 });
     } else if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ patientNname: -1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: -1 });
     } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: 1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: 1 });
     } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID }).sort({ doctorName: -1 });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: -1 });
     } else {
-      subscriber = await Appointment.find({ doctorID: req.params.doctorID });
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID });
     }
     if (subscriber == null) {
       return res.status(404).json({ message: "Cannot find subscriber" })

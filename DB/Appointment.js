@@ -49,6 +49,9 @@ const appointment = new mongoose.Schema({
         type: String,
         default: 'HomeVisit'  // 'HomeVisit' or 'Online'
     },
+    description: {
+        type: String,
+    },
     appointmentDate: {
         type: String
     },
@@ -59,8 +62,8 @@ const appointment = new mongoose.Schema({
     isPharmacyProvided: {
         type: Boolean,  // save only from PharmacistVisitCompleteIntimation UI
         default: false
-    },
-
+    }
+   
 });
 
 
