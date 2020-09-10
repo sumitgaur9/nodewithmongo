@@ -12,8 +12,7 @@ const disease = new mongoose.Schema({
     },
     takeCareBy: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     }
 
 });
