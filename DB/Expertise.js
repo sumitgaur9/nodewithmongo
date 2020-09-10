@@ -7,6 +7,7 @@ const expertise = new mongoose.Schema({
     diseaseName: {
         type: String,
         required: true,
+        unique: true,
         trim: true
     }
 });
