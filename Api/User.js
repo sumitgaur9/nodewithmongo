@@ -1238,10 +1238,10 @@ route.get('/Get_DiseaseWiseApptCount/:doctorID?', async (req, res) => {
     let arr=[];
     for(let i=0;i<diseases.length;i++){
       let obj = new Object();
-      obj.diseaseName1 = diseases[i].diseaseName1;
+      obj.diseaseName = diseases[i].diseaseName;
       obj.apptCount = 0;
       for(let j=0;j<appointments.length;j++){
-        if(diseases[i].diseaseName1==appointments[j].disease){
+        if(diseases[i].diseaseName==appointments[j].disease){
           obj.apptCount++;
         }
       }
