@@ -266,6 +266,43 @@ route.get('/Get_DoctorProfile/:id', getDoctor, async (req, res) => {
 // Getting all doctors
 route.get('/Get_DoctorsList', async (req, res) => {
   try {
+
+    // Doctor.updateMany(
+    //  //{inActive: undefined}, //optional      
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+    // Patient.updateMany(
+    //   {phoneno: undefined}, //optional
+    //   { phoneno: 9716342619 },
+    //   function (err, numberAffected) {
+    //   });
+    // Nurse.updateMany(
+    //  //{inActive: undefined}, //optional
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+    // Physio.updateMany(
+    //  //{inActive: undefined}, //optional
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+    // Pharmacist.updateMany(
+    //  //{inActive: undefined}, //optional
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+    // LabTechnician.updateMany(
+    //  //{inActive: undefined}, //optional
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+    // Participant.updateMany(
+    //   {phoneno: undefined}, //optional
+    //   { inActive: false },
+    //   function (err, numberAffected) {
+    //   });
+
     const doctors = await Doctor.find()
     res.send(doctors)
   } catch (err) {
@@ -276,8 +313,14 @@ route.get('/Get_DoctorsList', async (req, res) => {
 // Delete Doctor
 route.delete('/Delete_Doctor/:id', getDoctor, async (req, res) => {
 try {
-    await res.subscriber.remove()
-    res.json({ message: "Doctor Deleted successfully "})
+
+  let participant = await Participant.findById(res.subscriber.participantID);
+  participant.inActive = true;
+  await participant.save();
+
+  res.subscriber.inActive =true;
+  await res.subscriber.save();
+  res.json({ message: "Doctor Deleted successfully "})
 } catch (err) {
     res.status(500).json({ message: err.message })
 }
@@ -1552,7 +1595,17 @@ route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientL
 
 route.post('/users', async (req, res) => {
   // Create a new user
+
+
   try {
+    const participant = await Participant.findOne({ email:req.body.email });
+    if (participant) {
+      if (participant.inActive == true) {
+        res.status(501).send(new Error('Already registered account, But Account is InActive currently'))
+      }
+      return;
+    }
+
     if(req.body.role){
       if(req.body.role===1){req.body.type = "Doctor" }
       else if(req.body.role===2){req.body.type = "Nurse" }

@@ -39,6 +39,10 @@ const participant = new mongoose.Schema({
     description: {
       type: String,
     },
+    inActive: {
+      type: Boolean,
+      default: false,
+    },
     tokens: [{
       token: {
         type: String,

@@ -46,7 +46,11 @@ const doctor = new mongoose.Schema({
     },
     description: {
         type: String,
-      },
+    },
+    inActive: {
+        type: Boolean,
+        default: false,
+    },
     charges: {
         type: Number,
         default: 0,
