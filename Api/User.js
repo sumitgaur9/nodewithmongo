@@ -1600,11 +1600,12 @@ route.post('/users', async (req, res) => {
   try {
     const participant = await Participant.findOne({ email:req.body.email });
     if (participant) {
-      if (participant.inActive == true) {
-        res.status(501).send(new Error('Already registered account, But Account is InActive currently'))
+      if (participant.inActive == true) {        
+        res.status(501).json({ message: 'Already registered account, But Account is InActive currently'})
+        return;
       }
-      return;
     }
+
 
     if(req.body.role){
       if(req.body.role===1){req.body.type = "Doctor" }
