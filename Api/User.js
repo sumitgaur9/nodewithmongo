@@ -53,8 +53,8 @@ route.post('/GenerateOTP', async (req, res) => {
       throw new Error({ error: 'Phone number for user is not defined' })
     } 
      let otp = Math.floor(Math.random()*1000000);
-     var options = { authorization: 'DHfOUwAJ107WP2YN5pqhRo3zcKlITjXaM9tGrFQx8mv4i6nZydsW15y4bSw2qHGoBQEYpjIakKTgnUVu', message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
-    //var options = { authorization: process.env.YOUR_API_KEY, message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
+    //  var options = { authorization: 'DHfOUwAJ107WP2YN5pqhRo3zcKlITjXaM9tGrFQx8mv4i6nZydsW15y4bSw2qHGoBQEYpjIakKTgnUVu', message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
+    var options = { authorization: process.env.YOUR_API_KEY, message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
     const response = await fast2sms.sendMessage(options)
     response.OTP = otp;
     console.log(response)
