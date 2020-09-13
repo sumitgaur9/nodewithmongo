@@ -303,7 +303,8 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   function (err, numberAffected) {
     //   });
 
-    const doctors = await Doctor.find()
+    const doctors = await Doctor.find({inActive: false})
+
     res.send(doctors)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -408,7 +409,7 @@ route.get('/Get_PatientProfile/:id', getPatient, async (req, res) => {
 // Getting all patients
 route.get('/Get_PatientsList', async (req, res) => {
   try {
-    const patients = await Patient.find()
+    const patients = await Patient.find({inActive: false})
     res.send(patients)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -418,8 +419,13 @@ route.get('/Get_PatientsList', async (req, res) => {
 // Delete Patient
 route.delete('/Delete_Patient/:id', getPatient, async (req, res) => {
   try {
-      await res.subscriber.remove()
-      res.json({ message: "Patient Deleted successfully "})
+    let participant = await Participant.findById(res.subscriber.participantID);
+    participant.inActive = true;
+    await participant.save();
+  
+    res.subscriber.inActive =true;
+    await res.subscriber.save();
+    res.json({ message: "Patient Deleted successfully "})
   } catch (err) {
       res.status(500).json({ message: err.message })
   }
@@ -508,7 +514,7 @@ route.get('/Get_PharmacistProfile/:id', getPharmacist, async (req, res) => {
   // Getting all pharmacist
   route.get('/Get_PharmacistsList', async (req, res) => {
     try {
-      const pharmacists = await Pharmacist.find()
+      const pharmacists = await Pharmacist.find({inActive: false})
       res.send(pharmacists)
     } catch (err) {
       res.status(500).json({ message: err.message })
@@ -518,8 +524,13 @@ route.get('/Get_PharmacistProfile/:id', getPharmacist, async (req, res) => {
   // Delete Pharmacist
   route.delete('/Delete_Pharmacist/:id', getPharmacist, async (req, res) => {
   try {
-      await res.subscriber.remove()
-      res.json({ message: "Pharmacist Deleted successfully "})
+    let participant = await Participant.findById(res.subscriber.participantID);
+    participant.inActive = true;
+    await participant.save();
+  
+    res.subscriber.inActive =true;
+    await res.subscriber.save();
+    res.json({ message: "Pharmacist Deleted successfully "})
   } catch (err) {
       res.status(500).json({ message: err.message })
   }
@@ -609,7 +620,7 @@ route.put('/Update_NurseProfile/:id', upload, getNurse, async (req, res) => {
 // Getting all nurse
 route.get('/Get_NursesList', async (req, res) => {
   try {
-    const nurses = await Nurse.find()
+    const nurses = await Nurse.find({inActive: false})
     res.send(nurses)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -619,8 +630,13 @@ route.get('/Get_NursesList', async (req, res) => {
 // Delete Nurse
 route.delete('/Delete_Nurse/:id', getNurse, async (req, res) => {
 try {
-    await res.subscriber.remove()
-    res.json({ message: "Nurse Deleted successfully "})
+  let participant = await Participant.findById(res.subscriber.participantID);
+  participant.inActive = true;
+  await participant.save();
+
+  res.subscriber.inActive =true;
+  await res.subscriber.save();
+  res.json({ message: "Nurse Deleted successfully "})
 } catch (err) {
     res.status(500).json({ message: err.message })
 }
@@ -710,7 +726,7 @@ route.put('/Update_PhysioProfile/:id', upload, getPhysio, async (req, res) => {
 // Getting all physio
 route.get('/Get_PhysiosList', async (req, res) => {
   try {
-    const physios = await Physio.find()
+    const physios = await Physio.find({inActive: false})
     res.send(physios)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -720,8 +736,13 @@ route.get('/Get_PhysiosList', async (req, res) => {
 // Delete Physio
 route.delete('/Delete_Physio/:id', getPhysio, async (req, res) => {
 try {
-    await res.subscriber.remove()
-    res.json({ message: "Physio Deleted successfully "})
+  let participant = await Participant.findById(res.subscriber.participantID);
+  participant.inActive = true;
+  await participant.save();
+
+  res.subscriber.inActive =true;
+  await res.subscriber.save();
+  res.json({ message: "Physio Deleted successfully "})
 } catch (err) {
     res.status(500).json({ message: err.message })
 }
@@ -797,12 +818,27 @@ route.get('/Get_LabTechnicianProfile/:id', getLabTechnician, async (req, res) =>
 
 route.get('/Get_LabTechniciansList', async (req, res) => {
   try {
-    const labtechnicians = await LabTechnician.find()
+    const labtechnicians = await LabTechnician.find({inActive: false})
     res.send(labtechnicians)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
+
+// Delete LabTechnician
+route.delete('/Delete_LabTechnician/:id', getLabTechnician, async (req, res) => {
+  try {
+    let participant = await Participant.findById(res.subscriber.participantID);
+    participant.inActive = true;
+    await participant.save();
+  
+    res.subscriber.inActive =true;
+    await res.subscriber.save();
+    res.json({ message: "LabTechnician Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
 
 async function getLabTechnician(req, res, next){
   let subscriber 
@@ -1741,6 +1777,42 @@ route.post('/users/forgotPassword', async (req, res) => {
       return res.status(401).send({ error: 'Email does not exist!!!' })
     }
     user.password = newPassword;
+    if(req.body.isActivationRequired && req.body.isActivationRequired==true){
+      if(user.inActive==false){
+        user.inActive = true;
+
+        if(user.role < 1){        
+          const patient = await Patient.findOne({ participantID: user.participantID });
+           patient.inActive = false;
+           await patient.save();
+        }else if(user.role==1){
+          const doc = await Doctor.findOne({ participantID: user.participantID });
+          doc.inActive = false;
+           await doc.save();
+        }else if(user.role==2){        
+          const nurse = await Nurse.findOne({ participantID: user.participantID });
+          nurse.inActive = false;
+          await nurse.save();
+        }else if(user.role==3){        
+          const physio = await Physio.findOne({ participantID: user.participantID });
+          physio.inActive = false;
+           await physio.save();
+        }else if(user.role==4){        
+          const pharmacist = await Pharmacist.findOne({ participantID: user.participantID });
+          pharmacist.inActive = false;
+           await pharmacist.save();
+        }else if(user.role==5){        
+          const labtechician = await LabTechnician.findOne({ participantID: user.participantID });
+          labtechician.inActive = false;
+           await labtechician.save();
+        }else if(user.role==11){        
+          const admin = await Admin.findOne({ participantID: user.participantID });
+          admin.inActive = false;
+           await admin.save();
+        }
+
+      }
+    }
     await user.save();
     res.send({ user })
   } catch (error) {
