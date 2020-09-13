@@ -137,8 +137,8 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
   try {
 
     if (req.files && req.files.length) {
-      let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.body.locationEnum) })
-      let doc = (docs && docs.length)? docs[0]:null;
+      let doc = await ItemForWebsite.findOne({ locationEnum: parseInt(req.body.locationEnum) })
+      // let doc = (docs && docs.length)? docs[0]:null;
       var newItem = {
         image: {
           data: fs.readFileSync(path.join('./public/uploads/' + req.files[0].filename)),
@@ -171,8 +171,8 @@ route.get('/Get_WebsiteImageByLocationEnum/:locationEnum', async (req, res) => {
     if(!req.params.locationEnum){
       throw new Error({ error: 'Please provide the locationEnum' });
     }
-    let docs = await ItemForWebsite.find({ locationEnum: parseInt(req.params.locationEnum) })
-    let doc = (docs && docs.length)? docs[0]:null;
+    let doc = await ItemForWebsite.findOne({ locationEnum: parseInt(req.params.locationEnum) })
+    // let doc = (docs && docs.length)? docs[0]:null;
     res.send(doc)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -902,10 +902,10 @@ route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
       const updatedSubscr = await subscr.save();
 
       let subscri;
-      subscri = await PatientMedicinesForHomeDelivery.find({appointmentID: req.body.appointmentId})
+      subscri = await PatientMedicinesForHomeDelivery.findOne({appointmentID: req.body.appointmentId})
       
-      subscri[0].isPharmacyProvided = true;
-      const updatedSubscri = await subscri[0].save();
+      subscri.isPharmacyProvided = true;
+      const updatedSubscri = await subscri.save();
 
       res.status(200).send({ pharmacistvisitcompleteintimation })
   } catch (error) {
