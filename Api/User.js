@@ -53,8 +53,8 @@ route.post('/GenerateOTP', async (req, res) => {
       throw new Error({ error: 'Phone number for user is not defined' })
     } 
      let otp = Math.floor(Math.random()*1000000);
-     //var options = { authorization: 'DHfOUwAJ107WP2YN5pqhRo3zcKlITjXaM9tGrFQx8mv4i6nZydsW15y4bSw2qHGoBQEYpjIakKTgnUVu', message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
-    var options = { authorization: process.env.YOUR_API_KEY, message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
+     var options = { authorization: 'DHfOUwAJ107WP2YN5pqhRo3zcKlITjXaM9tGrFQx8mv4i6nZydsW15y4bSw2qHGoBQEYpjIakKTgnUVu', message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
+    //var options = { authorization: process.env.YOUR_API_KEY, message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
     const response = await fast2sms.sendMessage(options)
     response.OTP = otp;
     console.log(response)
@@ -1778,35 +1778,35 @@ route.post('/users/forgotPassword', async (req, res) => {
     }
     user.password = newPassword;
     if(req.body.isActivationRequired && req.body.isActivationRequired==true){
-      if(user.inActive==false){
-        user.inActive = true;
+      if(user.inActive==true){
+        user.inActive = false;
 
         if(user.role < 1){        
-          const patient = await Patient.findOne({ participantID: user.participantID });
+          const patient = await Patient.findOne({ participantID: user._id });
            patient.inActive = false;
            await patient.save();
         }else if(user.role==1){
-          const doc = await Doctor.findOne({ participantID: user.participantID });
+          const doc = await Doctor.findOne({ participantID: user._id });
           doc.inActive = false;
            await doc.save();
         }else if(user.role==2){        
-          const nurse = await Nurse.findOne({ participantID: user.participantID });
+          const nurse = await Nurse.findOne({ participantID: user._id });
           nurse.inActive = false;
           await nurse.save();
         }else if(user.role==3){        
-          const physio = await Physio.findOne({ participantID: user.participantID });
+          const physio = await Physio.findOne({ participantID: user._id });
           physio.inActive = false;
            await physio.save();
         }else if(user.role==4){        
-          const pharmacist = await Pharmacist.findOne({ participantID: user.participantID });
+          const pharmacist = await Pharmacist.findOne({ participantID: user._id });
           pharmacist.inActive = false;
            await pharmacist.save();
         }else if(user.role==5){        
-          const labtechician = await LabTechnician.findOne({ participantID: user.participantID });
+          const labtechician = await LabTechnician.findOne({ participantID: user._id });
           labtechician.inActive = false;
            await labtechician.save();
         }else if(user.role==11){        
-          const admin = await Admin.findOne({ participantID: user.participantID });
+          const admin = await Admin.findOne({ participantID: user._id });
           admin.inActive = false;
            await admin.save();
         }
