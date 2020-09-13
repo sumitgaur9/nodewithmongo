@@ -1710,9 +1710,9 @@ route.post('/users/login', async(req, res) => {
       const { email, password } = req.body
       const user = await Participant.findByCredentials(email, password)
       if (!user) {
-          return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+        res.status(401).json({ message: 'Login failed! Check authentication credentials'})
       } else if (user.inActive) { 
-          return res.status(401).send({error: 'Login failed! This is an InActive Account !! To Deactivate, register with same credentials'})
+        res.status(401).json({ message: 'Login failed! This is an InActive Account !! To Deactivate, register with same credentials'})
       }    
       let roleBaseId;
       const participantID = user.id;
