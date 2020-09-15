@@ -1124,29 +1124,30 @@ route.post('/SaveUpdate_LabTest/:id?', upload, getLabTest, async (req, res) => {
         data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
         contentType: 'image/png'
       }
-    } else {   // else req does not contain image
-      if (req.params.id) {    // if Update Case
-        const LabTestBeforeChange = await LabTest.findById(req.params.id)
+    } else {
+      newImage = {
+        data: [],
+        contentType: 'image/png'
+      }
+    }
+
+    if (req.params.id) {    // if Update Case
+      const LabTestBeforeChange = await LabTest.findById(req.params.id)
+      if (req.files && req.files.length) {
+      }
+      else {
         if (LabTestBeforeChange.newimage) {
           newImage = LabTestBeforeChange.newimage;
-        } else {
-          newImage = {
-            data: [],
-            contentType: 'image/png'
-          }
         }
-        const labtest = await LabTest.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
-        labtest.newimage = newImage;
-        await labtest.save()
-      } else {                // else New Case
-        newImage = {
-          data: [],
-          contentType: 'image/png'
-        }
-        const labtest = new LabTest(req.body);
-        labtest.newimage = newImage;
-        await labtest.save()
       }
+
+      const labtest = await LabTest.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+      labtest.newimage = newImage;
+      await labtest.save()
+    } else {               // else New Case
+      const labtest = new LabTest(req.body);
+      labtest.newimage = newImage;
+      await labtest.save()
     }
     res.status(200).send({ labtest })
   } catch (err) {
@@ -1173,18 +1174,20 @@ route.delete('/Delete_LabTest/:id', getLabTest, async (req, res) => {
   }
   })
   
-  async function getLabTest(req, res, next){
-      let subscriber 
-      try{
-          subscriber = await LabTest.findById(req.params.id)
-          if (subscriber == null){
-              return res.status(404).json({message: "Cannot find subscriber" })
-          }
-      } catch(err){  
+async function getLabTest(req, res, next) {
+  let subscriber
+  try {
+    if (req.params && req.params.id) {
+      subscriber = await LabTest.findById(req.params.id)
+      if (subscriber == null) {
+        return res.status(404).json({ message: "Cannot find subscriber" })
       }
-      res.subscriber = subscriber
-      next()
+    }
+  } catch (err) {
   }
+  res.subscriber = subscriber
+  next()
+}
 
 
 // Getting all lab tests
