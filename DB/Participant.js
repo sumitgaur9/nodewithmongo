@@ -65,7 +65,7 @@ const participant = new mongoose.Schema({
     // Generate an auth token for the user
     const user = this
     const token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
-    //const token = jwt.sign({_id: user._id}, "WinterIsComingGOT2019")
+    // const token = jwt.sign({_id: user._id}, "WinterIsComingGOT2019")
     user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
@@ -75,11 +75,13 @@ const participant = new mongoose.Schema({
     // Search for a user by email and password.
     const user = await Participant.findOne({ email })
     if (!user) {
-      throw new Error({ error: 'Invalid login credentials' })
+      //throw new Error({ error: 'Invalid login credentials' })
+      return false;
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password)
     if (!isPasswordMatch) {
-      throw new Error({ error: 'Invalid login credentials' })
+     // throw new Error({ error: 'Invalid login credentials' })
+     return false;
     }
     return user
   }
