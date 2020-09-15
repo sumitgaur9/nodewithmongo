@@ -1101,14 +1101,65 @@ async function getFilteredPatientAppointments(req, res, next){
 }
 
 
-route.post('/Save_LabTest',  async (req, res) => {
-  // Create a new LabTest
-  try {    
-      const labtest = new LabTest(req.body)
-      await labtest.save()
-      res.status(200).send({ labtest })
-  } catch (error) {
-      res.status(400).send(error)
+// route.post('/Save_LabTest',  async (req, res) => {
+//   // Create a new LabTest
+//   try {    
+//       const labtest = new LabTest(req.body)
+//       await labtest.save()
+//       res.status(200).send({ labtest })
+//   } catch (error) {
+//       res.status(400).send(error)
+//   }
+// })
+
+route.post('/SaveUpdate_LabTest/:id?', upload, getLabTest, async (req, res) => {
+  //Save(without Id) and Update a Lab Test with id
+  try {
+    let imageFile = '';
+    var newImage = {};
+    // if req contain image
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } else {   // else req does not contain image
+      if (req.params.id) {    // if Update Case
+        const LabTestBeforeChange = await LabTest.findById(req.params.id)
+        if (LabTestBeforeChange.newimage) {
+          newImage = LabTestBeforeChange.newimage;
+        } else {
+          newImage = {
+            data: [],
+            contentType: 'image/png'
+          }
+        }
+        const labtest = await LabTest.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+        labtest.newimage = newImage;
+        await labtest.save()
+      } else {                // else New Case
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+        const labtest = new LabTest(req.body);
+        labtest.newimage = newImage;
+        await labtest.save()
+      }
+    }
+    res.status(200).send({ labtest })
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
+// Get one LabTest 
+route.get('/Get_LabTest/:id', getLabTest, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
   }
 })
 
@@ -1149,14 +1200,65 @@ route.get('/Get_LabTestsList', async (req, res) => {
 
 
 
-route.post('/Save_LabTestsPackage',  async (req, res) => {
-  // Book a new LabTest
-  try {    
-      const labtestspackage = new LabTestsPackage(req.body)
-      await labtestspackage.save()
-      res.status(200).send({ labtestspackage })
-  } catch (error) {
-      res.status(400).send(error)
+// route.post('/Save_LabTestsPackage',  async (req, res) => {
+//   // Book a new LabTest
+//   try {    
+//       const labtestspackage = new LabTestsPackage(req.body)
+//       await labtestspackage.save()
+//       res.status(200).send({ labtestspackage })
+//   } catch (error) {
+//       res.status(400).send(error)
+//   }
+// })
+
+route.post('/SaveUpdate_LabTestsPackage/:id?', upload, getLabTestPackage, async (req, res) => {
+  //Save and Update a Lab Test Package with id
+  try {
+    let imageFile = '';
+    var newImage = {};
+    // if req contain image
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } else {   // else req does not contain image
+      if (req.params.id) {    // if Update Case
+        const LabTestsPackageBeforeChange = await LabTestsPackage.findById(req.params.id)
+        if (LabTestsPackageBeforeChange.newimage) {
+          newImage = LabTestsPackageBeforeChange.newimage;
+        } else {
+          newImage = {
+            data: [],
+            contentType: 'image/png'
+          }
+        }
+        const labtestpackage = await LabTestsPackage.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+        labtestpackage.newimage = newImage;
+        await labtestpackage.save()
+      } else {                // else New Case
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+        const labtestpackage = new LabTestsPackage(req.body);
+        labtestpackage.newimage = newImage;
+        await labtestpackage.save()
+      }
+    }
+    res.status(200).send({ labtestpackage })
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
+// Get one LabTestsPackage 
+route.get('/Get_LabTestsPackage/:id', getLabTestPackage, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
   }
 })
 

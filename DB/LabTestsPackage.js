@@ -17,6 +17,14 @@ const labtestspackage = new mongoose.Schema({
     packageAmount: {
         type: Number,
         required: true
+    },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
+    description: {
+        type: String,
     }
 
 });
