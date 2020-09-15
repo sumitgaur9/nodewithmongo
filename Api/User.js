@@ -1112,7 +1112,7 @@ async function getFilteredPatientAppointments(req, res, next){
 //   }
 // })
 
-route.post('/SaveUpdate_LabTest/:id?', upload, getLabTest, async (req, res) => {
+route.put('/SaveUpdate_LabTest/:id?', upload, getLabTest, async (req, res) => {
   //Save(without Id) and Update a Lab Test with id
   try {
     let imageFile = '';
