@@ -353,6 +353,41 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
+route.post('/Save_NewPatientProfileFromBookAppointment', async (req, res) => {
+  // Create a new Patient from Book Appointment form and Book Lab Test form
+  try {
+
+    const participant = await Participant.findOne({ email: req.body.email });
+    if (participant) {
+      if (participant.inActive == true) {
+        res.status(501).json({ message: 'Already registered account, But Account is InActive currently' })
+        return;
+      }
+    }
+
+    let object = {
+      name: req.body.name,
+      email: req.body.email,
+      phoneno: req.body.phoneno ? req.body.phoneno : '9716342619',
+      password: 'test',
+      role: 0,
+      type: 'Individual',
+      description: req.body.description,
+      inActive: false
+    }
+    const user = new Participant(object)
+    await user.save()
+
+    const patient = new Patient(req.body)
+    patient.participantID = user.id;
+    await patient.save()
+
+    res.status(200).send({ patient })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+
 // route.put('/Update_PatientProfile/:id', upload, getPatient, async (req, res) => {
 //   // Update a existing Patient with id
 //   try {
@@ -1233,10 +1268,6 @@ route.post('/Save_LabTestsPackage', upload, async (req, res) => {
         contentType: 'image/png'
       }
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     req.body.testsData = JSON.parse(req.body.testsData);
     let labtestpackage = new LabTestsPackage(req.body);
     labtestpackage.newimage = newImage;
@@ -1272,10 +1303,6 @@ route.put('/Update_LabTestsPackage/:id', upload, getLabTestPackage, async (req, 
         }
       }
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     req.body.testsData = JSON.parse(req.body.testsData);
     labtestpackage = await LabTestsPackage.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     labtestpackage.newimage = newImage;
