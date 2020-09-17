@@ -57,6 +57,7 @@ route.post('/GenerateOTP', async (req, res) => {
     var options = { authorization: process.env.YOUR_API_KEY, message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
     const response = await fast2sms.sendMessage(options)
     response.OTP = otp;
+    response.regMobileNo = user.phoneno;
     console.log(response)
     res.status(200).send({ response })
   } catch (error) {
@@ -1233,6 +1234,7 @@ route.post('/Save_LabTestsPackage', upload, async (req, res) => {
       }
     }
 
+    req.body.testsData = JSON.parse(req.body.testsData);
     let labtestpackage = new LabTestsPackage(req.body);
     labtestpackage.newimage = newImage;
     await labtestpackage.save()
@@ -1268,6 +1270,7 @@ route.put('/Update_LabTestsPackage/:id', upload, getLabTestPackage, async (req, 
       }
     }
 
+    req.body.testsData = JSON.parse(req.body.testsData);
     labtestpackage = await LabTestsPackage.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     labtestpackage.newimage = newImage;
     await labtestpackage.save()
