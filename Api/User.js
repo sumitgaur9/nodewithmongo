@@ -1233,7 +1233,10 @@ route.post('/Save_LabTestsPackage', upload, async (req, res) => {
         contentType: 'image/png'
       }
     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     req.body.testsData = JSON.parse(req.body.testsData);
     let labtestpackage = new LabTestsPackage(req.body);
     labtestpackage.newimage = newImage;
@@ -1269,7 +1272,10 @@ route.put('/Update_LabTestsPackage/:id', upload, getLabTestPackage, async (req, 
         }
       }
     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     req.body.testsData = JSON.parse(req.body.testsData);
     labtestpackage = await LabTestsPackage.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     labtestpackage.newimage = newImage;
@@ -1315,7 +1321,7 @@ route.delete('/Delete_LabTestsPackage/:id', getLabTestPackage, async (req, res) 
 
 
 // Getting all lab tests packages
-route.get('/Get_LabTestsPackage', async (req, res) => {
+route.get('/Get_LabTestsPackageList', async (req, res) => {
   try {
     const labtestspackage = await LabTestsPackage.find()
     res.send(labtestspackage)
