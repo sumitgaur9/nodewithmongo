@@ -273,10 +273,19 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   { inActive: false },
     //   function (err, numberAffected) {
     //   });
-    // Patient.updateMany(
-    //   {phoneno: undefined}, //optional
-    //   { phoneno: 9716342619 },
+    // Participant.updateMany(
+    //   {}, //conditional optional  
+    //   { phoneno: "9716342619" },
+    //   { upsert: true },
     //   function (err, numberAffected) {
+    //     console.log("No of records updated in Patient schema is: ", numberAffected);
+    //   });
+    // Physio.update(
+    //   {},
+    //   { phoneno: "9716342619" },
+    //   { multi: true },
+    //   function (err, numberAffected) {
+    //     console.log("No of records updated in Patient schema is: ", numberAffected);
     //   });
     // Nurse.updateMany(
     //  //{inActive: undefined}, //optional
@@ -2037,6 +2046,12 @@ route.get('/users/me', auth, async (req, res) => {
       const labtechnician = await LabTechnician.findOne({ participantID: labtechicianid });
       roleBaseId = labtechnician.id;
       user = labtechnician;
+    }else if (req.user.role == 11) {
+      const adminid = req.user.id
+      //const admin = await Admin.findOne({ docid });
+      const admin = await Admin.findOne({ participantID: adminid });
+      roleBaseId = admin.id;
+      user = admin;
     }
     // res.send(req.user, roleBaseId)
     res.status(200).send({ user, roleBaseId })
