@@ -362,9 +362,25 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
-route.post('/Save_NewPatientProfileFromBookAppointment', async (req, res) => {
+route.post('/Save_NewPatientProfileFromBookAppointment', upload, async (req, res) => {
   // Create a new Patient from Book Appointment form and Book Lab Test form
   try {
+
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {     
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+    }
 
     const participant = await Participant.findOne({ email: req.body.email });
     if (participant) {
@@ -389,6 +405,7 @@ route.post('/Save_NewPatientProfileFromBookAppointment', async (req, res) => {
 
     const patient = new Patient(req.body)
     patient.participantID = user.id;
+    patient.newImage = newImage;
     await patient.save()
 
     res.status(200).send({ patient })
