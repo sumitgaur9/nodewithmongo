@@ -1077,6 +1077,8 @@ async function getFilteredDoctorAppointments(req, res, next) {
       subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: 1 });
     } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
       subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: -1 });
+    } else if (req.body.doctorID && req.body.doctorID != '' && req.body.appointmentDate && req.body.appointmentDate != '') {
+      subscriber = await Appointment.find({ doctorID: req.body.doctorID, appointmentDate: req.body.appointmentDate });
     } else {
       subscriber = await Appointment.find({ doctorID: req.body.doctorID });
     }
