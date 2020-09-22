@@ -41,9 +41,11 @@ const appointment = new mongoose.Schema({
     },
     doctorID: {
         type: String,
+        required: true
     },
     doctorName: {
         type: String,
+        required: true
     },
     appointmentType: {
         type: String,
@@ -53,7 +55,12 @@ const appointment = new mongoose.Schema({
         type: String,
     },
     appointmentDate: {
-        type: String
+        type: String,
+        required: true,
+    },
+    timeSlot: {
+        type: Number,
+        required: true,
     },
     isVisitCompleted: {
         type: Boolean,  // save only from VisitCompletionIntimation UI
