@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 
 var multer = require('multer');
 
+var crypto = require('crypto');
 
 const User = require('../DB/User');
 const Participant = require('../DB/Participant');
@@ -362,9 +363,25 @@ route.post('/Save_PatientProfile',  async (req, res) => {
   }
 })
 
-route.post('/Save_NewPatientProfileFromBookAppointment', async (req, res) => {
+route.post('/Save_NewPatientProfileFromBookAppointment', upload, async (req, res) => {
   // Create a new Patient from Book Appointment form and Book Lab Test form
   try {
+
+    let imageFile='';    
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } 
+    else {     
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+    }
 
     const participant = await Participant.findOne({ email: req.body.email });
     if (participant) {
@@ -389,6 +406,7 @@ route.post('/Save_NewPatientProfileFromBookAppointment', async (req, res) => {
 
     const patient = new Patient(req.body)
     patient.participantID = user.id;
+    patient.newImage = newImage;
     await patient.save()
 
     res.status(200).send({ patient })
@@ -1788,7 +1806,26 @@ route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientL
 })
 
 
+route.post('/payment/verify', async (req, res) => {
+  // Create a new LabTest
+  try {
+    let body = req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id; 
+    var expectedSignature = crypto.createHmac('sha256','9oad02hYU3YABqDfrd3msZfW')
+                                  .update(body.toString())
+                                  .digest('hex');
+                                  console.log("rec sign: ",req.body.razorpay_signature);
+                                  console.log("exp sign: ",expectedSignature);
 
+    if (req.body.razorpay_signature == expectedSignature) {
+      res.status(200).json({ message: 'Signature Verified !!!'})
+    } else {
+      res.status(401).json({ message: 'OOPS !!! Signature not verified'})
+        return;
+    }
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
 
 
 //////////////////////////
