@@ -281,6 +281,13 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   function (err, numberAffected) {
     //     console.log("No of records updated in Patient schema is: ", numberAffected);
     //   });
+    // Appointment.updateMany(
+    //   { appointmentDate: undefined }, //condition is optional not whole first parameter  
+    //   { appointmentDate: '2020/07/29' },
+    //   { upsert: true },
+    //   function (err, numberAffected) {
+    //     console.log("No of records updated in Appointment schema is: ", numberAffected);
+    //   });
     // Physio.update(
     //   {},
     //   { phoneno: "9716342619" },
