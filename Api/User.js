@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 
 var multer = require('multer');
 
+var razorpayInstance = require('../DB/razorpay');
 var crypto = require('crypto');
 
 const User = require('../DB/User');
@@ -1149,8 +1150,8 @@ async function getFilteredPharmacyReq(req, res, next){
 
 ///////////
 
-//Get my(patient) appointments list by patient's id
-route.get('/Get_AppointmentsByPatientID/:patientID', getFilteredPatientAppointments, async (req, res) => {
+//Get my(patient) appointments list by patient's id and now all patients appointments case for admin now added
+route.get('/Get_AppointmentsByPatientID/:patientID?', getFilteredPatientAppointments, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
@@ -1161,7 +1162,11 @@ route.get('/Get_AppointmentsByPatientID/:patientID', getFilteredPatientAppointme
 async function getFilteredPatientAppointments(req, res, next){
   let subscriber 
   try{
+    if(req.params.patientID != undefined){
       subscriber = await Appointment.find({patientID: req.params.patientID});
+    } else {
+      subscriber = await Appointment.find();
+    }
 
       if (subscriber == null){
           return res.status(404).json({message: "Cannot find subscriber" })
@@ -1728,7 +1733,7 @@ route.get('/Get_MonthlyHomeOnlineApptCount/:doctorID?', async (req, res) => {
 /// Patient Dashboard API's
 
 //Get my(patient) doctor wise appointment count by patient's id 
-route.get('/Get_DoctorWiseApptCount/:patientID', getFilteredPatientAppointments, async (req, res) => {
+route.get('/Get_DoctorWiseApptCount/:patientID?', getFilteredPatientAppointments, async (req, res) => {
   try {
     let myAppt = res.subscriber;
 
@@ -1814,6 +1819,40 @@ route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientL
   }
 })
 
+
+route.post('/payment/creteOrder', async (req, res) => {
+  // Create a new LabTest
+  try {
+    let options = {
+      amount: req.body.amount * 100,
+      currency: req.body.currency,
+      receipt: req.body.receipt
+    }
+    razorpayInstance.instance.orders.create(options, function (razor_error, order) {
+
+      if (razor_error) {
+        console.log("razor error", razor_error)
+
+        res.status(417).json({
+          message: razor_error.message,
+          payload: null,
+          error: "Razorpay order creation unsuccessful"
+        })
+        return
+
+      } else {
+        res.status(200).json({
+          message: 'Order created successfully',
+          payload: order,
+          error: null
+        })
+      }
+    });
+
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
 
 route.post('/payment/verify', async (req, res) => {
   // Create a new LabTest
