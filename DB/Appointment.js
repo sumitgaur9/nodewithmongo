@@ -51,6 +51,10 @@ const appointment = new mongoose.Schema({
         type: String,
         default: 'HomeVisit'  // 'HomeVisit' or 'Online'
     },
+    charges: {
+        type: Number,
+        default: 0
+    },
     description: {
         type: String,
     },
