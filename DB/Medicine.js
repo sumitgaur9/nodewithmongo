@@ -15,6 +15,15 @@ const medicine = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
+    },
+    newimage:
+    {
+      data: Buffer,
+      contentType: String
+    },
+    description: {
+      type: String,
+      default: ''
     }
 });
 

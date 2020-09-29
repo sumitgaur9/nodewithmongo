@@ -66,6 +66,14 @@ const appointment = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    paymentID: {
+        type: String,
+        default: '',
+    },
+    isPaymentDone: {
+        type: Boolean,
+        default: false
+    },
     isVisitCompleted: {
         type: Boolean,  // save only from VisitCompletionIntimation UI
         default: false

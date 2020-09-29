@@ -1102,21 +1102,104 @@ async function getFilteredDoctorAppointments(req, res, next) {
 
 ////////////
 
-route.post('/Save_Medicine',  async (req, res) => {
+route.post('/Save_Medicine', upload, async (req, res) => {
   // Create a new Medicines
-  try {    
-      const medicine = new Medicine(req.body)
-      await medicine.save()
-      res.status(200).send({ medicine })
+  try {
+
+    let imageFile = '';
+    var newImage = {};
+    // if req contain image
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    } else {
+      newImage = {
+        data: [],
+        contentType: 'image/png'
+      }
+    }
+
+    const medicine = new Medicine(req.body)
+    medicine.newimage = newImage;
+    await medicine.save()
+    res.status(200).send({ medicine })
   } catch (error) {
-      res.status(400).send(error)
+    res.status(400).send(error)
   }
 })
 
-// Getting all diseases
-route.get('/Get_MedicinesList', async (req, res) => {
+route.put('/Update_Medicine/:id', upload, getMedicine, async (req, res) => {
+  //Update an existing Medicine with id
   try {
-    const medicines = await Medicine.find()
+    let imageFile = '';
+    var newImage = {};
+    let medicine;
+
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    }
+    else {
+      const MedicineBeforeChange = await Medicine.findById(req.params.id)
+      if (MedicineBeforeChange.newimage) {
+        newImage = MedicineBeforeChange.newimage;
+      } else {
+        newImage = {
+          data: [],
+          contentType: 'image/png'
+        }
+      }
+    }
+
+    medicine = await Medicine.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    medicine.newimage = newImage;
+    await medicine.save()
+    res.status(200).send({ medicine })
+  } catch (err) {
+    res.status(400).json({ message: err.message })
+  }
+})
+
+// Get one medicine profile
+route.get('/Get_Medicine/:id', getMedicine, async (req, res) => {
+  try {
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+async function getMedicine(req, res, next) {
+  let subscriber
+  try {
+    subscriber = await Medicine.findById(req.params.id)
+    if (subscriber == null) {
+      return res.status(404).json({ message: "Cannot find subscriber" })
+    }
+  } catch (err) {
+  }
+  res.subscriber = subscriber
+  next()
+}
+
+// Getting all diseases
+route.get('/Get_MedicinesList/:companyName?', async (req, res) => {
+
+  try {
+
+    let medicines;
+    if(req.params.companyName!=undefined){
+      medicines = await Medicine.find({companyName: req.params.companyName});
+    } else{
+      medicines = await Medicine.find()
+    }
+
     res.send(medicines)
   } catch (err) {
     res.status(500).json({ message: err.message })
