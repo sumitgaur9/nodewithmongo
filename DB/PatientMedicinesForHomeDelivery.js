@@ -13,14 +13,23 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
         type: String,
         required: true,
     },
-    medicineID: {
-        type: String,
-        required: true,
-    },
-    medicineName: {
-        type: String,
-        required: true,
-    },
+    medicinesData: [{
+        medicinesdataArrayForFixTimeSlot: [{
+            medicineID: String,
+            medicineName: String,
+        }],        
+        medicineSNo: Number,
+        medicineScheduleTime: String,
+        medicineScheduleDate: String,
+    }],
+    // medicineID: {
+    //     type: String,
+    //     required: true,
+    // },
+    // medicineName: {
+    //     type: String,
+    //     required: true,
+    // },
     doctorID: {
         type: String,
         required: true,  // not to show on UI
