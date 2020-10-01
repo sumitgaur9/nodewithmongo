@@ -35,6 +35,7 @@ const LabTechnician = require('../DB/LabTechnician');
 const LabTestReport = require('../DB/LabTestReport');
 const ItemForImageByteArray = require('../DB/itemforimagebytearray');
 const ItemForWebsite = require('../DB/ItemForWebsite');
+const TextForWebsite = require('../DB/TextForWebsite');
 const RazorpayPayments = require('../DB/RazorPayPayments');
 
 const auth = require('../middleware/auth');
@@ -192,6 +193,59 @@ route.get('/Get_WebsiteImageByLocationEnumList', async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 })
+
+
+// Save text data for website
+route.post('/SaveUpdate_WebsiteTextData', upload, async (req, res) => {
+  try {
+
+    if (req.body.locationEnum && parseInt(req.body.locationEnum)) {
+      let doc = await TextForWebsite.findOne({ locationEnum: parseInt(req.body.locationEnum) })
+      var newItem = {
+        textData: req.body.textData,
+        locationEnum: parseInt(req.body.locationEnum)
+      }
+      if (!doc) {
+        const newrecord = new TextForWebsite(newItem)
+        await newrecord.save();
+      } else {
+        doc.textData = newItem.textData;
+        await doc.save();
+      }
+    } else {
+      throw new Error({ error: 'Location Enum is MUST !!!' })
+    }
+   
+    res.status(200).send({ newItem })
+
+  } catch (error) {
+    res.json({ error: error })
+  }
+});
+
+// Getting text data for website by  locationEnum
+route.get('/Get_WebsiteTextDataByLocationEnum/:locationEnum', async (req, res) => {
+  try {
+    if(!req.params.locationEnum){
+      throw new Error({ error: 'Please provide the locationEnum' });
+    }
+    let textDataforwebsite = await TextForWebsite.findOne({ locationEnum: parseInt(req.params.locationEnum) })
+    res.send(textDataforwebsite)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+route.get('/Get_WebsiteTextDataByLocationEnumList', async (req, res) => {
+  try {
+    const TextForWebsiteList = await TextForWebsite.find()
+    res.send(TextForWebsiteList)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 
 
 
