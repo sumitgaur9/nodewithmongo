@@ -35,6 +35,7 @@ const LabTechnician = require('../DB/LabTechnician');
 const LabTestReport = require('../DB/LabTestReport');
 const ItemForImageByteArray = require('../DB/itemforimagebytearray');
 const ItemForWebsite = require('../DB/ItemForWebsite');
+const RazorpayPayments = require('../DB/RazorPayPayments');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -1947,7 +1948,32 @@ route.post('/payment/verify', async (req, res) => {
                                   console.log("rec sign: ",req.body.razorpay_signature);
                                   console.log("exp sign: ",expectedSignature);
 
+    razorpayInstance.instance.payments.fetch(req.body.razorpay_payment_id, async function (razor_error, paymentDetails) {
+
+      if (razor_error) {
+        console.log("razor error", razor_error)
+        res.status(417).json({
+          message: razor_error.message,
+          payload: null,
+          error: `Razorpay payment fetching failed for PaymentId: ${req.body.razorpay_payment_id}`
+        })
+        return
+
+      } else {
+        let razorpayPayment = new RazorpayPayments(paymentDetails)
+        razorpayPayment.paymentTypeEnumKey = req.body.paymentTypeEnumKey
+        razorpayPayment.paymentTypeEnumValue = req.body.paymentTypeEnumValue
+        razorpayPayment.localUIOrderID = req.body.localUIOrderID
+        razorpayPayment.patientEmail = req.body.patientEmail
+        await razorpayPayment.save();
+        
+      }
+    });
+
+
+
     if (req.body.razorpay_signature == expectedSignature) {
+      
       res.status(200).json({ message: 'Signature Verified !!!'})
     } else {
       res.status(401).json({ message: 'OOPS !!! Signature not verified'})

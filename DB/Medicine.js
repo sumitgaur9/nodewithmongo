@@ -7,6 +7,8 @@ const medicine = new mongoose.Schema({
     medicineName: {
         type: String,
         required: true,
+        unique: true,
+        trim: true
     },
     companyName: {
         type: String,
