@@ -1274,7 +1274,7 @@ route.get('/Get_MedicinesList/:companyName?', async (req, res) => {
 
 
 //Get my(phamacist) pharmacy request list by phamacist's id (now converted into post request)
-route.post('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, async (req, res) => {
+route.post('/Get_PharmaReqForHomeDel', getFilteredPharmacyReq, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
