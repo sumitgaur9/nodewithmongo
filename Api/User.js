@@ -1243,6 +1243,16 @@ async function getMedicine(req, res, next) {
   next()
 }
 
+// Delete Medicine
+route.delete('/Delete_Medicine/:id', getMedicine, async (req, res) => {
+  try {
+      await res.subscriber.remove()
+      res.json({ message: "Medicine Deleted successfully "})
+  } catch (err) {
+      res.status(500).json({ message: err.message })
+  }
+  })
+
 // Getting all diseases
 route.get('/Get_MedicinesList/:companyName?', async (req, res) => {
 
