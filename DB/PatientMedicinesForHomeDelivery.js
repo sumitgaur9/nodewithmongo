@@ -9,6 +9,10 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
         required: true,
         trim: true
     },     
+    patientID: {
+        type: String,
+        required: true,
+    },     
     appointmentID: {
         type: String,
         required: true,

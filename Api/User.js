@@ -2012,7 +2012,7 @@ route.post('/payment/verify', async (req, res) => {
                                   console.log("rec sign: ",req.body.razorpay_signature);
                                   console.log("exp sign: ",expectedSignature);
 
-    razorpayInstance.instance.payments.fetch(req.body.razorpay_payment_id, async function (razor_error, paymentDetails) {
+    razorpayInstance.instance.payments.fetch(req.body.razorpay_payment_id, async (razor_error, paymentDetails) => {
 
       if (razor_error) {
         console.log("razor error", razor_error)
@@ -2024,37 +2024,67 @@ route.post('/payment/verify', async (req, res) => {
         return
 
       } else {
-        var razorpayPayment = new RazorpayPayments(paymentDetails)
+        var razorpayPayment = new RazorpayPayments()
+        razorpayPayment.id = paymentDetails.id
+        razorpayPayment.entity = paymentDetails.entity
+        razorpayPayment.amount = paymentDetails.amount
+        razorpayPayment.currency = paymentDetails.currency
+        razorpayPayment.status = paymentDetails.status
+        razorpayPayment.order_id = paymentDetails.order_id
+        razorpayPayment.invoice_id = paymentDetails.invoice_id
+        razorpayPayment.international = paymentDetails.international
+        razorpayPayment.method = paymentDetails.method
+        razorpayPayment.amount_refunded = paymentDetails.amount_refunded
+        razorpayPayment.refund_status = paymentDetails.refund_status
+        razorpayPayment.captured = paymentDetails.captured
+        razorpayPayment.description = paymentDetails.description
+        razorpayPayment.card_id = paymentDetails.card_id
+        razorpayPayment.bank = paymentDetails.bank
+        razorpayPayment.wallet = paymentDetails.wallet
+        razorpayPayment.vpa = paymentDetails.vpa
+        razorpayPayment.email = paymentDetails.email
+        razorpayPayment.contact = paymentDetails.contact
+        razorpayPayment.notes = paymentDetails.notes
+        razorpayPayment.fee = paymentDetails.fee
+        razorpayPayment.tax = paymentDetails.tax
+        razorpayPayment.error_code = paymentDetails.error_code
+        razorpayPayment.error_description = paymentDetails.error_description
+        razorpayPayment.created_at = paymentDetails.created_at
+        ///////
         razorpayPayment.paymentTypeEnumKey = req.body.paymentTypeEnumKey
         razorpayPayment.paymentTypeEnumValue = req.body.paymentTypeEnumValue
         razorpayPayment.localUIOrderID = req.body.localUIOrderID
         razorpayPayment.patientEmail = req.body.patientEmail
         await razorpayPayment.save();
-        
+
+
+
+        if (req.body.paymentTypeEnumKey == 1) {
+          let appt = await Appointment.findById(req.body.localUIOrderID)
+          appt.paymentID = razorpayPayment.id;//req.body.razorpay_payment_id
+          appt.isPaymentDone = true;
+          await appt.save();
+        } else if (req.body.paymentTypeEnumKey == 2) {
+          let booklabtest = await BookLabTest.findById(req.body.localUIOrderID)
+          booklabtest.paymentID = razorpayPayment.id;
+          booklabtest.isPaymentDone = true;
+          await booklabtest.save();
+        }
+
+
+        if (req.body.razorpay_signature == expectedSignature) {
+
+          res.status(200).json({ message: 'Signature Verified !!!' })
+        } else {
+          res.status(401).json({ message: 'OOPS !!! Signature not verified' })
+          return;
+        }
+
+
       }
     });
 
-    if (req.body.paymentTypeEnumKey == 1) {
-      let appt = await Appointment.findById(req.body.localUIOrderID)
-      appt.paymentID = razorpayPayment.id;
-      appt.isPaymentDone = true;
-      await appt.save();
-    } else if (req.body.paymentTypeEnumKey == 2) {
-      let booklabtest = await BookLabTest.findById(req.body.localUIOrderID)
-      booklabtest.paymentID = razorpayPayment.id;
-      booklabtest.isPaymentDone = true;
-      await booklabtest.save();
-    } 
 
-
-
-    if (req.body.razorpay_signature == expectedSignature) {
-      
-      res.status(200).json({ message: 'Signature Verified !!!'})
-    } else {
-      res.status(401).json({ message: 'OOPS !!! Signature not verified'})
-        return;
-    }
   } catch (error) {
     res.status(400).send(error)
   }

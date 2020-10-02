@@ -59,7 +59,6 @@ const razorpayPayments = new mongoose.Schema({
     },
     invoice_id: {
         type: String,
-        required: true,
         default: null
     },
     international: {
@@ -78,7 +77,6 @@ const razorpayPayments = new mongoose.Schema({
     }, 
     refund_status: {
         type: String,
-        required: true,
         default: null
     },
     captured: {
@@ -87,13 +85,11 @@ const razorpayPayments = new mongoose.Schema({
         default: false
     },
     description: {
-        type: Boolean,
-        required: true,
+        type: String,
         default: false
     },
     card_id: {
         type: String, 
-        required: true
     },
     bank: {
         type: String, 
@@ -101,12 +97,10 @@ const razorpayPayments = new mongoose.Schema({
     },
     wallet: {
         type: String, 
-        required: true,
         default: null
     },
     vpa: {
         type: String, 
-        required: true,
         default: null
     },
     email: {
@@ -134,12 +128,10 @@ const razorpayPayments = new mongoose.Schema({
     },
     error_code: {
         type: Number,
-        required: true,
         default: null
     },
-    error_code: {
+    error_description: {
         type: String,
-        required: true,
         default: null
     },
     created_at: {
