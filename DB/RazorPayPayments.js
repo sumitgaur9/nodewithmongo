@@ -8,8 +8,9 @@ const mongoose = require('mongoose');
 const razorpayPayments = new mongoose.Schema({
     // Below 4 [paymentTypeEnumKey, paymentTypeEnumValue, localUIOrderID, patientEmail] will come from local req data
     paymentTypeEnumKey: {
-        type: String,
-        required: true
+        type: Number,
+        required: true,
+        default: 1
     },
     paymentTypeEnumValue: {
         type: String,

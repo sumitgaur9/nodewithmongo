@@ -2024,7 +2024,7 @@ route.post('/payment/verify', async (req, res) => {
         return
 
       } else {
-        let razorpayPayment = new RazorpayPayments(paymentDetails)
+        var razorpayPayment = new RazorpayPayments(paymentDetails)
         razorpayPayment.paymentTypeEnumKey = req.body.paymentTypeEnumKey
         razorpayPayment.paymentTypeEnumValue = req.body.paymentTypeEnumValue
         razorpayPayment.localUIOrderID = req.body.localUIOrderID
@@ -2033,6 +2033,18 @@ route.post('/payment/verify', async (req, res) => {
         
       }
     });
+
+    if (req.body.paymentTypeEnumKey == 1) {
+      let appt = await Appointment.findById(req.body.localUIOrderID)
+      appt.paymentID = razorpayPayment.id;
+      appt.isPaymentDone = true;
+      await appt.save();
+    } else if (req.body.paymentTypeEnumKey == 2) {
+      let booklabtest = await BookLabTest.findById(req.body.localUIOrderID)
+      booklabtest.paymentID = razorpayPayment.id;
+      booklabtest.isPaymentDone = true;
+      await booklabtest.save();
+    } 
 
 
 
