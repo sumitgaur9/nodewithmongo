@@ -1273,8 +1273,8 @@ route.get('/Get_MedicinesList/:companyName?', async (req, res) => {
 
 
 
-//Get my(phamacist) pharmacy request list by phamacist's id
-route.get('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, async (req, res) => {
+//Get my(phamacist) pharmacy request list by phamacist's id (now converted into post request)
+route.post('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, async (req, res) => {
   try {
     res.send(res.subscriber)
   } catch (err) {
@@ -1282,15 +1282,21 @@ route.get('/Get_PharmaReqByPhamacistID/:pharmacistID', getFilteredPharmacyReq, a
   }
 })
 
-async function getFilteredPharmacyReq(req, res, next){
-  let subscriber 
-  try{
-      subscriber = await PatientMedicinesForHomeDelivery.find({pharmacistID: req.params.pharmacistID});
 
-      if (subscriber == null){
-          return res.status(404).json({message: "Cannot find subscriber" })
-      }
-  } catch(err){
+async function getFilteredPharmacyReq(req, res, next) {
+  let subscriber
+  try {
+    if (req.body.doctorID && req.body.doctorID != '' ) {
+      subscriber = await PatientMedicinesForHomeDelivery.find({doctorID: req.body.doctorID});
+    } else if (req.body.patientID && req.body.patientID != '' ) {
+      subscriber = await PatientMedicinesForHomeDelivery.find({patientID: req.body.patientID});
+    } else if (req.body.pharmacistID && req.body.pharmacistID != '' ) {
+      subscriber = await PatientMedicinesForHomeDelivery.find({pharmacistID: req.body.pharmacistID});
+    }
+    if (subscriber == null) {
+      return res.status(404).json({ message: "Cannot find subscriber" })
+    }
+  } catch (err) {
   }
   res.subscriber = subscriber
   next()
