@@ -12,13 +12,13 @@ const pharmacistvisticompleteintimation = new mongoose.Schema({
     appointmentId: {
         type: String,
         required: true,
-    },    
-    medicineName: {
-        type: String,
-        required: true,
-    },   
-    medicineID: {
-        type: String,
+    },
+    medicinesData: [{
+        medicineID: String,
+        medicineName: String,
+    }],
+    price: {
+        type: Number,
         required: true,
     },
     doctorName: {
