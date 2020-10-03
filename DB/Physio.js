@@ -32,15 +32,7 @@ const physio = new mongoose.Schema({
       data: Buffer,
       contentType: String
     },
-    experties: {
-        type: String,
-        default: '',
-       // required: true,
-    },
     phoneno: {
-        type: String,
-    },
-    timeAvailablity: {
         type: String,
     },
     charges: {
@@ -57,10 +49,7 @@ const physio = new mongoose.Schema({
     },
     area: {
         type: String,
-    },
-    qualification: {
-        type: String,
-    },
+    }
 
 });
 

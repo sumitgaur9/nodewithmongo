@@ -41,9 +41,6 @@ const doctor = new mongoose.Schema({
     phoneno: {
         type: String,
     },
-    timeAvailablity: {
-        type: String,
-    },
     description: {
         type: String,
     },

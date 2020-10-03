@@ -32,9 +32,6 @@ const patient = new mongoose.Schema({
       data: Buffer,
       contentType: String
     },
-    disease: {
-        type: String
-    }, 
     phoneno: {
         type: String,
     },
@@ -47,11 +44,7 @@ const patient = new mongoose.Schema({
     },
     address: {
         type: String,
-    },
-    qualification: {
-        type: String,
-    },
-
+    }
 });
 
 
