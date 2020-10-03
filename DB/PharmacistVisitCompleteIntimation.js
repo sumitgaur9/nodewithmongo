@@ -18,7 +18,7 @@ const pharmacistvisticompleteintimation = new mongoose.Schema({
         medicineName: String,
         medicinePricePerUnit: Number,
         medicineQty: Number,
-        medicineTotPrice: String,
+        medicineTotPrice: Number,
     }],
     price: {
         type: Number,
