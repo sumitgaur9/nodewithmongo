@@ -2096,6 +2096,15 @@ route.post('/payment/verify', async (req, res) => {
   }
 })
 
+// Get all payments list from local schema
+route.get('/Get_PaymentLists', async (req, res) => {
+  try {
+    const razorpayPayments = await RazorpayPayments.find()
+    res.send(razorpayPayments)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 //////////////////////////
 
@@ -2184,44 +2193,50 @@ route.post('/users', async (req, res) => {
 route.post('/users/login', async(req, res) => {
   //Login a registered user
   try {
-      const { email, password } = req.body
-      const user = await Participant.findByCredentials(email, password)
-      if (!user) {
-        res.status(401).json({ message: 'Login failed! Check authentication credentials'})
-        return;
-      } else if (user.inActive) { 
-        res.status(401).json({ message: 'Login failed! This is an InActive Account !! To Deactivate, register with same credentials'})
-        return;
-      }    
-      let roleBaseId;
-      const participantID = user.id;
+    const { email, password } = req.body
 
-      if(user.role < 1){        
-        const patient = await Patient.findOne({ participantID });
-        roleBaseId = patient.id;
-      }else if(user.role==1){
-        const doc = await Doctor.findOne({ participantID });
-        roleBaseId = doc.id;
-      }else if(user.role==2){        
-        const nurse = await Nurse.findOne({ participantID });
-        roleBaseId = nurse.id;
-      }else if(user.role==3){        
-        const physio = await Physio.findOne({ participantID });
-        roleBaseId = physio.id;
-      }else if(user.role==4){        
-        const pharmacist = await Pharmacist.findOne({ participantID });
-        roleBaseId = pharmacist.id;
-      }else if(user.role==5){        
-        const labtechician = await LabTechnician.findOne({ participantID });
-        roleBaseId = labtechician.id;
-      }else if(user.role==11){        
-        const admin = await Admin.findOne({ participantID });
-        roleBaseId = admin.id;
-      }
-      const token = await user.generateAuthToken() 
-      res.send({ user, roleBaseId, token })
+    const participant = await Participant.findOne({ email: req.body.email })
+    if (!participant) {
+      return res.status(401).send({ error: 'Email does not exist!!!' })
+    } else if (participant.inActive == true) {
+      res.status(401).json({ message: 'Login failed! This is an InActive Account !! To Deactivate, register with same credentials' })
+      return;
+    }
+
+    const user = await Participant.findByCredentials(email, password)
+    if (!user) {
+      res.status(401).json({ message: 'Login failed! Check authentication credentials' })
+      return;
+    }
+    let roleBaseId;
+    const participantID = user.id;
+
+    if (user.role < 1) {
+      const patient = await Patient.findOne({ participantID });
+      roleBaseId = patient.id;
+    } else if (user.role == 1) {
+      const doc = await Doctor.findOne({ participantID });
+      roleBaseId = doc.id;
+    } else if (user.role == 2) {
+      const nurse = await Nurse.findOne({ participantID });
+      roleBaseId = nurse.id;
+    } else if (user.role == 3) {
+      const physio = await Physio.findOne({ participantID });
+      roleBaseId = physio.id;
+    } else if (user.role == 4) {
+      const pharmacist = await Pharmacist.findOne({ participantID });
+      roleBaseId = pharmacist.id;
+    } else if (user.role == 5) {
+      const labtechician = await LabTechnician.findOne({ participantID });
+      roleBaseId = labtechician.id;
+    } else if (user.role == 11) {
+      const admin = await Admin.findOne({ participantID });
+      roleBaseId = admin.id;
+    }
+    const token = await user.generateAuthToken()
+    res.send({ user, roleBaseId, token })
   } catch (error) {
-      res.status(400).send(error)
+    res.status(400).send(error)
   }
 
 })
