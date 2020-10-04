@@ -49,12 +49,18 @@ const fast2sms = require('fast-two-sms')
  
 route.post('/GenerateOTP', async (req, res) => {
   try {
+    if(!req.body.email){
+      res.status(501).json({ message: 'Email ID must be provided' })
+      return;
+    }
     const user = await Participant.findOne({ email:req.body.email })
     if (!user) {
-      throw new Error({ error: 'Email ID does not exist' })
+      res.status(501).json({ message: 'Email ID does not exist' })
+      return;
     } 
     if (!user.phoneno) {
-      throw new Error({ error: 'Phone number for user is not defined' })
+      res.status(501).json({ message: 'Phone number for user is not defined' })
+      return;
     } 
      let otp = Math.floor(Math.random()*1000000);
     //  var options = { authorization: 'DHfOUwAJ107WP2YN5pqhRo3zcKlITjXaM9tGrFQx8mv4i6nZydsW15y4bSw2qHGoBQEYpjIakKTgnUVu', message: 'Your HealthCare App account OTP to change password is: '+ otp, numbers: [ user.phoneno] }
