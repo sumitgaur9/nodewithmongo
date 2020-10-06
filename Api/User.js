@@ -2152,7 +2152,7 @@ route.delete('/RemoveCartDetails/:userId?/:itemID?', async (req, res) => {
     } else {
       subscriber = await CartDetails.find({userId: req.params.userId});
     }
-    await res.remove()
+    await subscriber.remove()
     res.json({ message: "Item Deleted successfully for userId "+ req.params.userId})
   } catch (err) {
     res.status(500).json({ message: err.message })
