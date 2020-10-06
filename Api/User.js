@@ -37,6 +37,7 @@ const ItemForImageByteArray = require('../DB/itemforimagebytearray');
 const ItemForWebsite = require('../DB/ItemForWebsite');
 const TextForWebsite = require('../DB/TextForWebsite');
 const RazorpayPayments = require('../DB/RazorPayPayments');
+const CartDetails = require('../DB/CartDetails');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -2103,16 +2104,45 @@ route.post('/payment/verify', async (req, res) => {
 })
 
 // Get all payments list from local schema
-route.get('/Get_PaymentLists', async (req, res) => {
+route.get('/Get_PaymentLists/:paymentTypeEnumKey?', async (req, res) => {
   try {
-    const razorpayPayments = await RazorpayPayments.find()
+    let razorpayPayments;
+    if(req.params.paymentTypeEnumKey!=undefined){
+      razorpayPayments = await RazorpayPayments.find({paymentTypeEnumKey: req.params.paymentTypeEnumKey});
+    } else {
+      razorpayPayments = await RazorpayPayments.find();
+    }
     res.send(razorpayPayments)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
 
+
 //////////////////////////
+
+route.post('/Save_AddtoCart',  async (req, res) => {
+  // Create a new cart details
+  try {    
+      const cartdetail = new CartDetails(req.body)
+      await cartdetail.save()
+      res.status(200).send({ cartdetail })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+// Get one user cart details
+route.get('/Get_CartDetails/:userId', async (req, res) => {
+  try {
+    subscriber = await CartDetails.find({userId: req.params.userId});
+    res.send(res.subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
 
 
 

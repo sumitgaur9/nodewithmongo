@@ -18,7 +18,7 @@ const razorpayPayments = new mongoose.Schema({
     },
     localUIOrderID: {
         type: String,
-        required: true,
+       // required: true,  // can't be required:true in case of multiple medicines
     },
     patientEmail: {
         type: String,
