@@ -2146,8 +2146,8 @@ route.get('/Get_CartDetails/:userId', async (req, res) => {
 route.delete('/RemoveCartDetails/:userId?/:itemID?', async (req, res) => {
   try {
     let subscriber
-    
-    if(req.params.userId!=undefined && req.params.userId!=itemID){
+
+    if(req.params.userId!=undefined && req.params.itemID!=undefined){
       subscriber = await CartDetails.find({userId: req.params.userId, itemID: req.params.itemID});
     } else {
       subscriber = await CartDetails.find({userId: req.params.userId});
