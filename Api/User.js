@@ -2135,8 +2135,25 @@ route.post('/Save_AddtoCart',  async (req, res) => {
 // Get one user cart details
 route.get('/Get_CartDetails/:userId', async (req, res) => {
   try {
-    subscriber = await CartDetails.find({userId: req.params.userId});
+    let subscriber = await CartDetails.find({userId: req.params.userId});
     res.send(subscriber)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+// Remove one user cart details
+route.delete('/RemoveCartDetails/:userId?/:itemID?', async (req, res) => {
+  try {
+    let subscriber
+    
+    if(req.params.userId!=undefined && req.params.userId!=itemID){
+      subscriber = await CartDetails.find({userId: req.params.userId, itemID: req.params.itemID});
+    } else {
+      subscriber = await CartDetails.find({userId: req.params.userId});
+    }
+    await res.remove()
+    res.json({ message: "Item Deleted successfully for userId "+ req.params.userId})
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
