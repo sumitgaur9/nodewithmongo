@@ -2136,7 +2136,7 @@ route.post('/Save_AddtoCart',  async (req, res) => {
 route.get('/Get_CartDetails/:userId', async (req, res) => {
   try {
     subscriber = await CartDetails.find({userId: req.params.userId});
-    res.send(res.subscriber)
+    res.send(subscriber)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
