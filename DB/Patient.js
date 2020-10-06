@@ -24,6 +24,10 @@ const patient = new mongoose.Schema({
         type: Number,
         default: 1  //1-Male, 2-Female
     },
+    age: {
+        type: Number,
+        default: 18  
+    },
     participantID: {
         type: String,
         required: true,
