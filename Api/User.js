@@ -2146,7 +2146,11 @@ route.get('/Get_CartDetails/:userId', async (req, res) => {
 route.delete('/RemoveCartDetails/:userId?/:itemID?', getCart, async (req, res) => {
   try {
     
-    await res.subscriber.remove()
+    //for (res.subscriber && res.subscriber.length) {
+      for (let i = 0; i < res.subscriber.length; i++) {
+        await res.subscriber[i].remove();
+      }
+    //}
     res.json({ message: "Item Deleted successfully for userId "+ req.params.userId})
   } catch (err) {
     res.status(500).json({ message: err.message })
