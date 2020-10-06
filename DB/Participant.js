@@ -20,6 +20,10 @@ const participant = new mongoose.Schema({
         }
       }
     },
+    gender: {
+        type: Number,
+        default: 1  //1-Male, 2-Female
+    },
     phoneno: {
         type: String,
         required: true

@@ -20,6 +20,10 @@ const physio = new mongoose.Schema({
             }
         }
     },
+    gender: {
+        type: Number,
+        default: 1  //1-Male, 2-Female
+    },
     participantID: {
         type: String,
         required: true,

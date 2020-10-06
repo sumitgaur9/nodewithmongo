@@ -2181,8 +2181,9 @@ route.post('/users', async (req, res) => {
       let obj = {
         name: req.body.name,
         email: req.body.email,
+        phoneno: req.body.phoneno, 
+        gender: req.body.gender,
         participantID: user.id,          
-        phoneno: user.phoneno,          
       }
       if(req.body.role < 1){
         //Patient(Individual)
