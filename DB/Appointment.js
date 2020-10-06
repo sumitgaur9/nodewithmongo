@@ -10,6 +10,14 @@ const appointment = new mongoose.Schema({
         required: true,
         trim: true
     },
+    patientAge: {
+        type: Number,
+        default: 18
+    },
+    patientSex: {
+        type: Number,
+        default: 1 //1-Male, 2-Female
+    },
     patientMob: {
         type: String,
     },
