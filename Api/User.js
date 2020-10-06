@@ -2143,21 +2143,33 @@ route.get('/Get_CartDetails/:userId', async (req, res) => {
 })
 
 // Remove one user cart details
-route.delete('/RemoveCartDetails/:userId?/:itemID?', async (req, res) => {
+route.delete('/RemoveCartDetails/:userId?/:itemID?', getCart, async (req, res) => {
   try {
-    let subscriber
-
-    if(req.params.userId!=undefined && req.params.itemID!=undefined){
-      subscriber = await CartDetails.find({userId: req.params.userId, itemID: req.params.itemID});
-    } else {
-      subscriber = await CartDetails.find({userId: req.params.userId});
-    }
-    await subscriber.remove()
+    
+    await res.subscriber.remove()
     res.json({ message: "Item Deleted successfully for userId "+ req.params.userId})
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
+
+async function getCart(req, res, next) {
+  let subscriber
+  try {
+    if(req.params.userId!=undefined && req.params.itemID!=undefined){
+      subscriber = await CartDetails.find({userId: req.params.userId, itemID: req.params.itemID});
+    } else {
+      subscriber = await CartDetails.find({userId: req.params.userId});
+    }
+
+    if (subscriber == null) {
+      return res.status(404).json({ message: "Cannot find subscriber" })
+    }
+  } catch (err) {
+  }
+  res.subscriber = subscriber
+  next()
+}
 
 
 
