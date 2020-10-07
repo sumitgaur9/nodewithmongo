@@ -14,6 +14,16 @@ const medicine = new mongoose.Schema({
         type: String,
         required: true,
     },
+    mfgDate: {
+        type: String
+    },
+    expDate: {
+        type: String
+    },
+    isExpired: {
+        type: Boolean,
+        default: false
+    },
     price: {
         type: Number,
         required: true,
