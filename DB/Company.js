@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // diseaseName
 
 const company = new mongoose.Schema({
-    expertiseName: {
+    companyName: {
         type: String,
         required: true,
         unique: true,
