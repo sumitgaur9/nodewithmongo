@@ -25,6 +25,7 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
         medicineSNo: Number,
         medicineScheduleTime: String,
         medicineScheduleDate: String,
+        processInfo: String,
     }],
     // medicineID: {
     //     type: String,

@@ -24,6 +24,7 @@ const PatientMedicinesForHomeDelivery = require('../DB/PatientMedicinesForHomeDe
 const PharmacistVisitCompleteIntimation = require('../DB/PharmacistVisitCompleteIntimation');
 const Disease = require('../DB/Disease');
 const Expertise = require('../DB/Expertise');
+const Company = require('../DB/Company');
 const Appointment = require('../DB/Appointment');
 const Medicine = require('../DB/Medicine');
 const LabTest = require('../DB/LabTest');
@@ -1093,6 +1094,27 @@ route.post('/Save_Expertise',  async (req, res) => {
   }
 })
 
+// Getting all medicine company list
+route.get('/Get_CompanyList', async (req, res) => {
+  try {
+    const company = await Company.find()
+    res.send(company)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+route.post('/Save_Company',  async (req, res) => {
+  // Create a new Medicine Company
+  try {    
+      const company = new Company(req.body)
+      await company.save()
+      res.status(200).send({ company })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
 // Get filterd doctors list based on expertise
   route.get('/Get_FilteredDoctors/:expertise', getFilteredDoctors, async (req, res) => {
     try {
@@ -1314,6 +1336,27 @@ async function getFilteredPharmacyReq(req, res, next) {
 //Get my(patient) appointments list by patient's id and now all patients appointments case for admin now added
 route.get('/Get_AppointmentsByPatientID/:patientID?', getFilteredPatientAppointments, async (req, res) => {
   try {
+
+    let doctors = await Doctor.find({inActive: false})
+    
+    let obj =[];
+    res.subscriber.forEach(elementAppt => {
+
+      elementAppt.isDoctorinActive = false;
+
+      doctors.forEach(elementDoct => {
+        if(  elementAppt.doctorID == elementDoct._id){
+          if(elementDoct.inActive){
+            elementAppt.isDoctorinActive = false;
+          }
+        }
+      }); 
+
+      obj.push(elementAppt);
+
+
+    });
+    res.subscriber = obj;
     res.send(res.subscriber)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -1574,7 +1617,7 @@ route.post('/Save_BookLabTest',  async (req, res) => {
 })
 
 // Getting all lab tests booking list
-route.get('/Get_LabTestsBookings', async (req, res) => {
+route.post('/Get_LabTestsBookings', async (req, res) => {
   try {
 
     let labtestsbookings;
