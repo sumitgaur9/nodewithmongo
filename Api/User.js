@@ -1975,7 +1975,11 @@ route.get('/Get_LabTestWisetestCount/:patientID', getFilteredPatientLabtests, as
 async function getFilteredPatientLabtests(req, res, next){
   let subscriber 
   try{
+    if(req.params.patientID != undefined && req.params.patientID!=''){
       subscriber = await BookLabTest.find({patientID: req.params.patientID});
+    } else {
+      subscriber = await BookLabTest.find();  // case for admin
+    }
 
       if (subscriber == null){
           return res.status(404).json({message: "Cannot find subscriber" })
