@@ -1973,9 +1973,11 @@ route.get('/Get_LabTestWisetestCount/:patientID', getFilteredPatientLabtests, as
       obj.testName = labtests[i].testName;
       obj.testCount = 0;
       for(let j=0;j<mytests.length;j++){
-        if(labtests[i]._id==mytests[j].testsData[0].testID){
-          obj.testCount++;
-        }
+        for(let k=0;k<mytests[j].testsData.length;k++){
+          if(labtests[i].id==mytests[j].testsData[k].testID){
+            obj.testCount++;
+          }
+        }        
       }
       arr.push(obj);
     }
@@ -2004,17 +2006,18 @@ async function getFilteredPatientLabtests(req, res, next){
 route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientLabtests, async (req, res) => {
   try {
     let mytests = res.subscriber;
-
-    const labtests = await LabTest.find()
    
       let obj = new Object();
       obj.individualTestCount = 0;
       obj.packageCount = 0;
       for(let j=0;j<mytests.length;j++){
-        if(mytests[j].testsData[0].packageID!=""){
+        if(mytests[j].packageID!=""){
           obj.packageCount++;
         } else {
-          obj.individualTestCount++;
+          //one labtest may have contain more than one individual lab test
+          mytests[j].testsData.forEach(element => {
+            obj.individualTestCount++;
+          });
         }
       }     
     res.send(obj)
