@@ -1679,10 +1679,10 @@ route.get('/Get_UploadedTestReportbyBookLabTestID/:BookLabTestID', async (req, r
 
 route.get('/Get_CommonDashboardCount', async (req, res) => {
   try {
-    const doctors = await Doctor.find()
-    const patients = await Patient.find()
-    const nurses = await Nurse.find()
-    const pharmacists = await Pharmacist.find()
+    const doctors = await Doctor.find({inActive: false})
+    const patients = await Patient.find({inActive: false})
+    const nurses = await Nurse.find({inActive: false})
+    const pharmacists = await Pharmacist.find({inActive: false})
     let obj ={
       total_no_of_doctors: doctors.length,
       total_no_of_patients: patients.length,
