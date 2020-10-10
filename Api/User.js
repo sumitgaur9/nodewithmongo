@@ -1947,7 +1947,7 @@ route.get('/Get_DoctorWiseApptCount/:patientID?', getFilteredPatientAppointments
 
 
 //Get my(patient) individual lab test (ignore test packages) count by patient's id 
-route.get('/Get_LabTestWisetestCount/:patientID', getFilteredPatientLabtests, async (req, res) => {
+route.get('/Get_LabTestWisetestCount/:patientID?', getFilteredPatientLabtests, async (req, res) => {
   try {
     let mytests = res.subscriber;
 
@@ -1992,7 +1992,7 @@ async function getFilteredPatientLabtests(req, res, next){
 
 
 //Get my(patient) individual lab test count to package count by patient's id 
-route.get('/Get_IndividualToPackageLabTestCount/:patientID', getFilteredPatientLabtests, async (req, res) => {
+route.get('/Get_IndividualToPackageLabTestCount/:patientID?', getFilteredPatientLabtests, async (req, res) => {
   try {
     let mytests = res.subscriber;
    
