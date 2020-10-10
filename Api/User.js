@@ -1161,19 +1161,24 @@ route.post('/Get_AppointmentsByDocID', getFilteredDoctorAppointments, async (req
 async function getFilteredDoctorAppointments(req, res, next) {
   let subscriber
   try {
-    if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: 1 });
-    } else if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: -1 });
-    } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'desc') {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: 1 });
-    } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: -1 });
-    } else if (req.body.doctorID && req.body.doctorID != '' && req.body.appointmentDate && req.body.appointmentDate != '') {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID, appointmentDate: req.body.appointmentDate });
+    if(req.body.doctorID != undefined && req.body.doctorID!=''){
+      if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'desc') {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: 1 });
+      } else if (req.body.sortBy && req.body.sortBy == "patientNname" && req.body.sortDir == 'asc') {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ patientNname: -1 });
+      } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'desc') {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: 1 });
+      } else if (req.body.sortBy && req.body.sortBy == "doctorName" && req.body.sortDir == 'asc') {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID }).sort({ doctorName: -1 });
+      } else if (req.body.doctorID && req.body.doctorID != '' && req.body.appointmentDate && req.body.appointmentDate != '') {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID, appointmentDate: req.body.appointmentDate });
+      } else {
+        subscriber = await Appointment.find({ doctorID: req.body.doctorID });
+      }
     } else {
-      subscriber = await Appointment.find({ doctorID: req.body.doctorID });
+      subscriber = await Appointment.find();
     }
+    
     if (subscriber == null) {
       return res.status(404).json({ message: "Cannot find subscriber" })
     }
@@ -1337,26 +1342,6 @@ async function getFilteredPharmacyReq(req, res, next) {
 route.get('/Get_AppointmentsByPatientID/:patientID?', getFilteredPatientAppointments, async (req, res) => {
   try {
 
-    let doctors = await Doctor.find({inActive: false})
-    
-    let obj =[];
-    res.subscriber.forEach(elementAppt => {
-
-      elementAppt.isDoctorinActive = false;
-
-      doctors.forEach(elementDoct => {
-        if(  elementAppt.doctorID == elementDoct._id){
-          if(elementDoct.inActive){
-            elementAppt.isDoctorinActive = false;
-          }
-        }
-      }); 
-
-      obj.push(elementAppt);
-
-
-    });
-    res.subscriber = obj;
     res.send(res.subscriber)
   } catch (err) {
     res.status(500).json({ message: err.message })
