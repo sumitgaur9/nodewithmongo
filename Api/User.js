@@ -1320,12 +1320,12 @@ route.post('/Get_PharmaReqForHomeDel', getFilteredPharmacyReq, async (req, res) 
 async function getFilteredPharmacyReq(req, res, next) {
   let subscriber
   try {
-    if (req.body.doctorID && req.body.doctorID != '' ) {
-      subscriber = await PatientMedicinesForHomeDelivery.find({doctorID: req.body.doctorID});
-    } else if (req.body.patientID && req.body.patientID != '' ) {
+    if (req.body.patientID && req.body.patientID != '' ) {
       subscriber = await PatientMedicinesForHomeDelivery.find({patientID: req.body.patientID});
     } else if (req.body.pharmacistID && req.body.pharmacistID != '' ) {
       subscriber = await PatientMedicinesForHomeDelivery.find({pharmacistID: req.body.pharmacistID});
+    } else {
+      subscriber = await PatientMedicinesForHomeDelivery.find();
     }
     if (subscriber == null) {
       return res.status(404).json({ message: "Cannot find subscriber" })
