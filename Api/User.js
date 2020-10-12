@@ -338,6 +338,15 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   { inActive: false },
     //   function (err, numberAffected) {
     //   });
+
+    // Patient.updateMany(
+    //   {age: undefined}, //conditional optional  
+    //   { age: 18 },
+    //   { upsert: true },
+    //   function (err, numberAffected) {
+    //     console.log("No of records updated in Patient schema is: ", numberAffected);
+    //   });
+
     // Participant.updateMany(
     //   {}, //conditional optional  
     //   { phoneno: "9716342619" },
