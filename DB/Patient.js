@@ -29,7 +29,7 @@ const patient = new mongoose.Schema({
         default: 18  
     },
     weight: {
-        type: Number,
+        type: Number, 
         default: 60  
     },
     participantID: {
