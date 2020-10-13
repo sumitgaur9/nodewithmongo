@@ -43,6 +43,10 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
         type: String,
         required: true
     },
+    testsData: [{
+        testID: String,
+        testname: String
+    }],
     pharmacistID: {
         type: String,
         required: true,
