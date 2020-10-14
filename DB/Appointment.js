@@ -41,12 +41,18 @@ const appointment = new mongoose.Schema({
     patientPIN: {
         type: String,
     },
-    disease: {
-        type: String,
-    },
-    diseaseAge: {
-        type: String, // doctor id
-    },
+    diseasesData: [{
+        diseasesID: String,
+        diseaseName: String
+    }],
+    symptomsData: [{
+        symptomID: String,
+        symptomName: String
+    }],
+    illnessHistoryData: [{
+        illnessID: String,
+        illnessName: String
+    }],
     doctorID: {
         type: String,
         required: true
