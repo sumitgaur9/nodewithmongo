@@ -64,14 +64,6 @@ const patientmedicineforhomedelivery = new mongoose.Schema({
     patientPIN: {
         type: String
     },
-    isPharmacyRequested: {
-        type: Boolean,  // save only from PharmacyReqForHomeDel UI
-        default: false
-    },
-    isPharmacyProvided: {
-        type: Boolean,  // save only from PharmacistVisitCompleteIntimation UI
-        default: false
-    },
 
 });
 
