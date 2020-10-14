@@ -1047,6 +1047,12 @@ route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
   try {    
       const patientmedicinesforhomedelivery = new PatientMedicinesForHomeDelivery(req.body)
       await patientmedicinesforhomedelivery.save()
+
+      let subscr;
+      subscr = await Appointment.findById(req.body.appointmentId)
+      subscr.isPharmacyRequested = true;
+      const updatedSubscr = await subscr.save();
+
       res.status(200).send({ patientmedicinesforhomedelivery })
   } catch (error) {
       res.status(400).send(error)

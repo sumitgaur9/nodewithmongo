@@ -96,6 +96,10 @@ const appointment = new mongoose.Schema({
         type: Boolean,  // save only from VisitCompletionIntimation UI
         default: false
     },
+    isPharmacyRequested: {
+        type: Boolean,  // save only from PharmacyReqForHomeDel UI
+        default: false
+    },
     isPharmacyProvided: {
         type: Boolean,  // save only from PharmacistVisitCompleteIntimation UI
         default: false
