@@ -35,6 +35,10 @@ const appointment = new mongoose.Schema({
         type: String,
         required: true
     },
+    patientWeight: {
+        type: Number, 
+        default: 60  
+    },
     patientAddres: {
         type: String,
     },
