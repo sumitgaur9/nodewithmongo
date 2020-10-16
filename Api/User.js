@@ -1048,7 +1048,7 @@ route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
       await patientmedicinesforhomedelivery.save()
 
       let subscr;
-      subscr = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentId)
+      subscr = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentID)
       subscr.isPharmacyRequested = true;
       subscr.isVisitCompleted = true;
       const updatedSubscr = await subscr.save();
@@ -1065,7 +1065,7 @@ route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
 
       if (req.body.nextAppointmentData.isNextVisitRequired==true) {
         let prevAppt;
-        prevAppt = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentId)
+        prevAppt = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentID)
         prevAppt.appointmentDate = req.body.nextAppointmentData.nextAppointmentDate
         prevAppt.timeSlot = req.body.nextAppointmentData.nextAppointmentTime
         const nextAppointment = new Appointment(prevAppt)
