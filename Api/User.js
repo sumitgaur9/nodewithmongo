@@ -1077,6 +1077,22 @@ route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
       res.status(400).send(error)
   }
 })
+
+// Getting all PharmacyHomeDelRequest List as well for single appointmentID
+route.get('/Get_PatientMedicinesHomeDelivery/:appointmentID?', async (req, res) => {
+  try {
+    let patmedicinesforhomedel;
+    if(req.params.appointmentID!=undefined){
+      patmedicinesforhomedel = await PatientMedicinesForHomeDelivery.find({appointmentId:req.params.appointmentID})
+    } else {
+      patmedicinesforhomedel = await PatientMedicinesForHomeDelivery.find()
+    }
+    res.send(patmedicinesforhomedel)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 ////////////
 route.post('/Save_PharmaVisitCompleteIntimation',  async (req, res) => {
   // Create a new Physio
