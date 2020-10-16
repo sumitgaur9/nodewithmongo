@@ -359,9 +359,11 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   function (err, numberAffected) {
     //   });
 
-    // Patient.updateMany(
-    //   {age: undefined}, //conditional optional  
-    //   { age: 18 },
+    
+
+    // Appointment.updateMany(
+    //   {isVisitCompleted: false}, //conditional optional  
+    //   { isPharmacyRequested: false },
     //   { upsert: true },
     //   function (err, numberAffected) {
     //     console.log("No of records updated in Patient schema is: ", numberAffected);
@@ -1025,11 +1027,7 @@ route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
       await visitcompleteintimation.save()
 
       let subscr;
-      if(req.body.role==1){
-        subscr = await Appointment.findById(req.body.appointmentId)
-        subscr.isVisitCompleted = true;
-        const updatedSubscr = await subscr.save()
-      } else if(req.body.role==2){
+      if(req.body.role==2){  //2 -nurse   // doctor case moved to Request_PatientMedicinesHomeDelivery API
         subscr = await BookLabTest.findById(req.body.bookLabTestId)
         subscr.isCollectionCollected = true;
         const updatedSubscr1 = await subscr.save()
@@ -1043,15 +1041,36 @@ route.post('/Save_VisitCompleteIntimation',  async (req, res) => {
 ////////////
 
 route.post('/Request_PatientMedicinesHomeDelivery',  async (req, res) => {
-  // Create a new Physio
+  // Create a new PatientMedicinesHomeDelivery
+  // now two object will come in req.body (PatientMedicinesForHomeDelivery and nextAppointmentData)
   try {    
-      const patientmedicinesforhomedelivery = new PatientMedicinesForHomeDelivery(req.body)
+      const patientmedicinesforhomedelivery = new PatientMedicinesForHomeDelivery(req.body.PatientMedicinesForHomeDelivery)
       await patientmedicinesforhomedelivery.save()
 
       let subscr;
-      subscr = await Appointment.findById(req.body.appointmentId)
+      subscr = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentId)
       subscr.isPharmacyRequested = true;
+      subscr.isVisitCompleted = true;
       const updatedSubscr = await subscr.save();
+
+      let visitcomptObj = {
+        role: 1,
+        patientName: req.body.PatientMedicinesForHomeDelivery.patientName,
+        isNextVisitRequired: req.body.nextAppointmentData.isNextVisitRequired,//
+        appointmentId: req.body.PatientMedicinesForHomeDelivery.appointmentID,
+        bookLabTestId: '',      
+      }
+      const visitcompleteintimation = new VisitCompletionIntimation(visitcomptObj)
+      await visitcompleteintimation.save();
+
+      if (req.body.nextAppointmentData.isNextVisitRequired==true) {
+        let prevAppt;
+        prevAppt = await Appointment.findById(req.body.PatientMedicinesForHomeDelivery.appointmentId)
+        prevAppt.appointmentDate = req.body.nextAppointmentData.nextAppointmentDate
+        prevAppt.timeSlot = req.body.nextAppointmentData.nextAppointmentTime
+        const nextAppointment = new Appointment(prevAppt)
+        await nextAppointment.save();
+      }
 
       res.status(200).send({ patientmedicinesforhomedelivery })
   } catch (error) {

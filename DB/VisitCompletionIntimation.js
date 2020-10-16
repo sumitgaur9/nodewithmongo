@@ -17,7 +17,7 @@ const visitcompleteintimation = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
-    appointmentId: {
+    appointmentId: {     // now this case will be covered from Request_PatientMedicinesHomeDelivery
         type: String,
         //required: true,  //will use for doctor's appointment case , not for nurse's booklabtest case
     },
