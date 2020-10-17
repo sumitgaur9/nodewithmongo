@@ -24,10 +24,10 @@ const medicine = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    // isExpired: {
-    //     type: Boolean,
-    //     default: false
-    // },
+    isExpired: {
+        type: Boolean,
+        default: false
+    },
     price: {
         type: Number,
         required: true,

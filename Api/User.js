@@ -177,6 +177,50 @@ route.get('/Get_UploadPrescriptionForMedicineApprovalsList', async (req, res) =>
   }
 })
 
+route.post('/Save_ApproveMedicineReqUsingPrescription',  async (req, res) => {
+  // Create a new Patient
+  try {    
+    if(req.body.requestId!=undefined&& req.body.requestId!=''){
+      
+      let subscr;
+      subscr = await PrescriptionForMedicineApproval.findById(req.body.requestId)
+      if (subscr == null) {
+        return res.status(404).json({ message: "Cannot find subscriber" })
+      }
+      subscr.isPrescriptionRequestApproved = true;
+      if(req.body.approvalDate && req.body.approvalDate!=''){
+        subscr.approvalDate = req.body.approvalDate;
+      } else {
+        subscr.approvalDate = '';
+      }
+      const updatedSubscr = await subscr.save();
+      res.status(200).send({ updatedSubscr })
+    }
+      res.status(200).send({ patient })
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
+
+route.post('/Update_BuyStatusForApprovedMedicine',  async (req, res) => {
+  // Create a new Patient
+  try {    
+    if(req.body.requestId!=undefined&& req.body.requestId!=''){
+      
+      let subscr;
+      subscr = await PrescriptionForMedicineApproval.findById(req.body.requestId)
+      if (subscr == null) {
+        return res.status(404).json({ message: "Cannot find subscriber" })
+      }
+      subscr.isPaymentDone = true;      
+      const updatedSubscr = await subscr.save();
+      res.status(200).send({ updatedSubscr })
+    }
+     
+  } catch (error) {
+      res.status(400).send(error)
+  }
+})
 
 // route.post('/api/photo', upload, function (req, res) {
 
