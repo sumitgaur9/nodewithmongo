@@ -39,6 +39,7 @@ const ItemForWebsite = require('../DB/ItemForWebsite');
 const TextForWebsite = require('../DB/TextForWebsite');
 const RazorpayPayments = require('../DB/RazorPayPayments');
 const CartDetails = require('../DB/CartDetails');
+const PrescriptionForMedicineApproval = require('../DB/PrescriptionForMedicineApproval');
 
 const auth = require('../middleware/auth');
 const { pathToFileURL } = require('url');
@@ -140,6 +141,42 @@ route.post('/api/photo', upload,  (req, res)=> {
 
 });
 
+route.post('/Save_UploadPrescriptionForMedicineApproval', upload, (req, res) => {
+
+  try {
+    let imageFile = '';
+    var newImage = {};
+    if (req.files && req.files.length) {
+      imageFile = req.files[0].filename;
+      newImage = {
+        data: fs.readFileSync(path.join('./public/uploads/' + imageFile)),
+        contentType: 'image/png'
+      }
+    }
+    else {
+      return res.status(500).json({ message: "Prescription upload is MUST !!!" })
+    }
+    var newItem = new PrescriptionForMedicineApproval(req.body)
+    newImage.newImage = newImage;
+    newItem.save()
+    res.status(200).send({ newItem })
+
+  } catch (error) {
+    res.json({ error: error })
+  }
+
+});
+
+// Getting all UploadPrescriptionForMedicineApproval list
+route.get('/Get_UploadPrescriptionForMedicineApprovalsList', async (req, res) => {
+  try {
+    const prescriptionForMedicineApproval = await PrescriptionForMedicineApproval.find()
+    res.send(prescriptionForMedicineApproval)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 
 // route.post('/api/photo', upload, function (req, res) {
 
@@ -187,7 +224,7 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
         await doc.save();
       }
     } else {
-      throw new Error({ error: 'Image upload is MUST !!!' })
+      return res.status(500).json({message: "Image upload is MUST !!!" })
     }
    
     res.status(200).send({ newItem })
@@ -202,7 +239,7 @@ route.post('/SaveUpdate_UploadWebsiteImages', upload, async (req, res) => {
 route.get('/Get_WebsiteImageByLocationEnum/:locationEnum', async (req, res) => {
   try {
     if(!req.params.locationEnum){
-      throw new Error({ error: 'Please provide the locationEnum' });
+      return res.status(500).json({message: "Please provide the locationEnum" })
     }
     let doc = await ItemForWebsite.findOne({ locationEnum: parseInt(req.params.locationEnum) })
     // let doc = (docs && docs.length)? docs[0]:null;
@@ -241,7 +278,7 @@ route.post('/SaveUpdate_WebsiteTextData', upload, async (req, res) => {
         await doc.save();
       }
     } else {
-      throw new Error({ error: 'Location Enum is MUST !!!' })
+      return res.status(500).json({message: "Location Enum is MUST !!!" })
     }
    
     res.status(200).send({ newItem })
@@ -255,7 +292,7 @@ route.post('/SaveUpdate_WebsiteTextData', upload, async (req, res) => {
 route.get('/Get_WebsiteTextDataByLocationEnum/:locationEnum', async (req, res) => {
   try {
     if(!req.params.locationEnum){
-      throw new Error({ error: 'Please provide the locationEnum' });
+      return res.status(500).json({message: "Please provide the locationEnum" })
     }
     let textDataforwebsite = await TextForWebsite.findOne({ locationEnum: parseInt(req.params.locationEnum) })
     res.send(textDataforwebsite)
