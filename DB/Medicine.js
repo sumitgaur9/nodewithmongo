@@ -20,6 +20,10 @@ const medicine = new mongoose.Schema({
     expDate: {
         type: String
     },
+    isPrescriptionRequired: {
+        type: Boolean,
+        default: false
+    },
     isExpired: {
         type: Boolean,
         default: false
