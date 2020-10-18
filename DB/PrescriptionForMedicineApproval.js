@@ -12,7 +12,7 @@ const prescriptionForMedicineApproval = new mongoose.Schema({
         type: String,
         required: true,
     },
-    newimage:
+    newImage:
     {
       data: Buffer,
       contentType: String
@@ -48,7 +48,7 @@ const prescriptionForMedicineApproval = new mongoose.Schema({
     },
     approvalDate: {
         type: String,
-        required: true,
+        default: ''
     },
     isPaymentDone: {
         type: Boolean,

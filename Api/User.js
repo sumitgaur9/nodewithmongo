@@ -157,7 +157,7 @@ route.post('/Save_UploadPrescriptionForMedicineApproval', upload, (req, res) => 
       return res.status(500).json({ message: "Prescription upload is MUST !!!" })
     }
     var newItem = new PrescriptionForMedicineApproval(req.body)
-    newImage.newImage = newImage;
+    newItem.newImage = newImage;
     newItem.save()
     res.status(200).send({ newItem })
 
@@ -168,9 +168,15 @@ route.post('/Save_UploadPrescriptionForMedicineApproval', upload, (req, res) => 
 });
 
 // Getting all UploadPrescriptionForMedicineApproval list
-route.get('/Get_UploadPrescriptionForMedicineApprovalsList', async (req, res) => {
+route.get('/Get_UploadPrescriptionForMedicineApprovalsList/:patientID?', async (req, res) => {
   try {
-    const prescriptionForMedicineApproval = await PrescriptionForMedicineApproval.find()
+    let prescriptionForMedicineApproval;
+
+    if(req.params.patientID!=undefined){
+      prescriptionForMedicineApproval = await PrescriptionForMedicineApproval.find({patientID: req.params.patientID})
+    } else {
+      prescriptionForMedicineApproval = await PrescriptionForMedicineApproval.find()
+    }
     res.send(prescriptionForMedicineApproval)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -196,7 +202,6 @@ route.post('/Save_ApproveMedicineReqUsingPrescription',  async (req, res) => {
       const updatedSubscr = await subscr.save();
       res.status(200).send({ updatedSubscr })
     }
-      res.status(200).send({ patient })
   } catch (error) {
       res.status(400).send(error)
   }
@@ -440,6 +445,13 @@ route.get('/Get_DoctorsList', async (req, res) => {
     //   function (err, numberAffected) {
     //   });
 
+    // Patient.updateMany(
+    //   { age: undefined }, //conditional optional  
+    //   { age: 18 },
+    //   { upsert: true },
+    //   function (err, numberAffected) {
+    //     console.log("No of records updated in Patient schema is: ", numberAffected);
+    //   });
     
 
     // Appointment.updateMany(
