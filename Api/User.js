@@ -12,6 +12,8 @@ var multer = require('multer');
 var razorpayInstance = require('../DB/razorpay');
 var crypto = require('crypto');
 
+const excelToJson = require('convert-excel-to-json');
+
 const User = require('../DB/User');
 const Participant = require('../DB/Participant');
 const Doctor = require('../DB/Doctor');
@@ -110,6 +112,53 @@ var upload = multer({
   storage: Storage
 }).any('file');
 
+
+// -> Express Upload RestAPIs
+// route.post('/api/uploadfile', upload.single("uploadfile"), (req, res) =>{
+route.post('/api/uploadfile', upload, (req, res) =>{
+    importExcelData2MongoDB('./public/uploads/' + req.files[0].filename);
+  res.json({
+      'msg': 'File uploaded/import successfully!', 'file': req.files[0]
+  });
+});
+
+function importExcelData2MongoDB(filePath) {
+  // -> Read Excel File to Json Data
+  const excelData = excelToJson({
+    sourceFile: filePath,
+    sheets: [{
+      // Excel Sheet Name
+      name: 'Medicines',
+      // Header Row -> be skipped and will not be present at our result object.
+      header: {
+        rows: 1
+      },
+      // Mapping columns to keys
+      columnToKey: {
+        A: 'medicineName',
+        B: 'companyName',
+        C: 'price',
+        D: 'description'
+      }
+    }]
+  });
+
+  // -> Log Excel Data to Console
+  console.log(excelData);
+
+ 
+
+  Medicine.insertMany(excelData.Medicines, (err, res) => {
+    if (err) throw err;
+    console.log("Number of documents inserted: " + res.insertedCount);
+    /**
+        Number of documents inserted: 5
+    */
+  });
+
+
+  fs.unlinkSync(filePath);
+}
 
 
 // Getting all api photos
