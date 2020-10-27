@@ -513,7 +513,7 @@ route.get('/Get_DoctorsList', async (req, res) => {
 
     // Participant.updateMany(
     //   {}, //conditional optional  
-    //   { phoneno: "9716342619" },
+    //   { firebaseNotificationToken: "" },
     //   { upsert: true },
     //   function (err, numberAffected) {
     //     console.log("No of records updated in Patient schema is: ", numberAffected);
@@ -1349,6 +1349,11 @@ route.post('/Save_BookAppointment',  async (req, res) => {
   try {    
       const appointment = new Appointment(req.body)
       await appointment.save()
+
+      // Send notification code
+      //
+      //
+      
       res.status(200).send({ appointment })
   } catch (error) {
       res.status(400).send(error)
@@ -2504,7 +2509,7 @@ route.post('/users', async (req, res) => {
 route.post('/users/login', async(req, res) => {
   //Login a registered user
   try {
-    const { email, password } = req.body
+    const { email, password, firebaseNotificationToken } = req.body
 
     const participant = await Participant.findOne({ email: req.body.email })
     if (!participant) {
@@ -2521,6 +2526,8 @@ route.post('/users/login', async(req, res) => {
     }
     let roleBaseId;
     const participantID = user.id;
+    user.firebaseNotificationToken = firebaseNotificationToken;
+    await user.save();
 
     if (user.role < 1) {
       const patient = await Patient.findOne({ participantID });
@@ -2700,6 +2707,7 @@ route.post('/users/me/logout', auth, async (req, res) => {
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token != req.token
         })
+        req.user.firebaseNotificationToken = '';
         await req.user.save()
         res.send()
     } catch (error) {
