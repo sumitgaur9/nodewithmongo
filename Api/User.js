@@ -1357,14 +1357,14 @@ route.post('/Save_BookAppointment', async (req, res) => {
     let doctor = await Doctor.findById( req.body.doctorID);
     let doctorParticipantID = doctor.participantID;
 
-    let participant = await participant.findById( doctorParticipantID);
-    if (participant.firebaseNotificationToken != undefined && participant.firebaseNotificationToken != '') {
+    let participantlocal = await Participant.findById( doctorParticipantID);
+    if (participantlocal.firebaseNotificationToken != undefined && participantlocal.firebaseNotificationToken != '') {
       //var serverKey = process.env.FIREBASE_SERVER_KEY;
       var serverKey =  'AAAAhPz0FEg:APA91bFnHf-c0AYa-oGLXmiXIeBHXvnEIa2YqZFt4vjHlsolEb-5B9nO8_A3kfJK4MWHHqYFve0py1wouUkyK-rEOb1kb4hLtAWM_cSSXxufH4AsV_sUB8UUb7zsTNHgik3NbhBANA5F'
       var fcm = new FCM(serverKey);
 
       var message = {
-        to: participant.firebaseNotificationToken, // required fill with device token or topics
+        to: participantlocal.firebaseNotificationToken, // required fill with device token or topics
         //collapse_key: 'your_collapse_key',
         // data: {
         //   your_custom_data_key: 'your_custom_data_value'
