@@ -12,6 +12,8 @@ var multer = require('multer');
 var razorpayInstance = require('../DB/razorpay');
 var crypto = require('crypto');
 
+var FCM = require('fcm-push');
+
 const excelToJson = require('convert-excel-to-json');
 
 const User = require('../DB/User');
@@ -1344,19 +1346,52 @@ route.post('/Save_Company',  async (req, res) => {
 }
 
 //Save new appointment
-route.post('/Save_BookAppointment',  async (req, res) => {
+route.post('/Save_BookAppointment', async (req, res) => {
   // Create a new appointment
-  try {    
-      const appointment = new Appointment(req.body)
-      await appointment.save()
+  try {
+    const appointment = new Appointment(req.body)
+    await appointment.save()
 
-      // Send notification code
+    // Send notification code
+
+    let doctor = await Doctor.findById( req.body.doctorID);
+    let doctorParticipantID = doctor.participantID;
+
+    let participant = await participant.findById( doctorParticipantID);
+    if (participant.firebaseNotificationToken != undefined && participant.firebaseNotificationToken != '') {
+      //var serverKey = process.env.FIREBASE_SERVER_KEY;
+      var serverKey =  'AAAAhPz0FEg:APA91bFnHf-c0AYa-oGLXmiXIeBHXvnEIa2YqZFt4vjHlsolEb-5B9nO8_A3kfJK4MWHHqYFve0py1wouUkyK-rEOb1kb4hLtAWM_cSSXxufH4AsV_sUB8UUb7zsTNHgik3NbhBANA5F'
+      var fcm = new FCM(serverKey);
+
+      var message = {
+        to: participant.firebaseNotificationToken, // required fill with device token or topics
+        //collapse_key: 'your_collapse_key',
+        // data: {
+        //   your_custom_data_key: 'your_custom_data_value'
+        // },
+        notification: {
+          title: 'HealthCare',
+          body: 'You have a new Appointment Request'
+        }
+      };
+
+      //callback style
+      fcm.send(message, function (err, response) {
+        if (err) {
+          console.log("Something has gone wrong!");
+        } else {
+          console.log("Successfully sent with response: ", response);
+        }
+      });
       //
       //
-      
-      res.status(200).send({ appointment })
+    }
+
+   
+
+    res.status(200).send({ appointment })
   } catch (error) {
-      res.status(400).send(error)
+    res.status(400).send(error)
   }
 })
 
