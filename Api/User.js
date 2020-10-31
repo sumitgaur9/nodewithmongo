@@ -12,7 +12,10 @@ var multer = require('multer');
 var razorpayInstance = require('../DB/razorpay');
 var crypto = require('crypto');
 
+
 var FCM = require('fcm-push');
+
+const { check, validationResult } = require('express-validator')
 
 const excelToJson = require('convert-excel-to-json');
 
@@ -1312,9 +1315,16 @@ route.get('/Get_CompanyList', async (req, res) => {
   }
 })
 
-route.post('/Save_Company',  async (req, res) => {
+route.post('/Save_Company', [
+  check('companyName').not().isEmpty().trim().escape()
+], 
+async (req, res) => {
   // Create a new Medicine Company
   try {    
+      const errors = validationResult(req);
+      if(!errors.isEmpty()){
+        return res.status(422).json({ status:false, message: "Prescription upload is MUST !!!", errors: errors.array() });
+      }
       const company = new Company(req.body)
       await company.save()
       res.status(200).send({ company })
