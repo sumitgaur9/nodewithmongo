@@ -1323,7 +1323,7 @@ async (req, res) => {
   try {    
       const errors = validationResult(req);
       if(!errors.isEmpty()){
-        return res.status(422).json({ status:false, message: "Prescription upload is MUST !!!", errors: errors.array() });
+        return res.status(422).json({ status:false, message: "Company Name is MUST !!!", errors: errors.array() });
       }
       const company = new Company(req.body)
       await company.save()
